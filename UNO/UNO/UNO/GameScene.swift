@@ -108,10 +108,10 @@ class GameScene: SKScene {
         while(i >= 1){
 
             let r = Int(arc4random()) % (i)
-            let sv : Card = deck[i]
-            d[i] = deck[r]
+            let sv : Card = d[i]
+            d[i] = d[r]
             d[r] = sv
-            
+
             i-=1
         }
         return d
@@ -124,7 +124,7 @@ class GameScene: SKScene {
         //drawPile.push(CARD) adds the card to the stack
         //CARD.position gives a location for the touchesMoved method to use for testing the drawing and rearranging of cards logic
         //addChild(CARD) activates the node to be used by the game handler
-        
+        NSLog("Filling deck")
         //NOTE @CARDS(BLUE & YELLOW STILL NEED TEMPORARY POSITIONS)
         var i = 0
         while(i < 11){
@@ -134,14 +134,23 @@ class GameScene: SKScene {
             iDeck.append(Card(clr:.green,typ:.normal,num:i))
             i+=1
         }
-        iDeck = shuffle(deck : iDeck)
+       iDeck = shuffle(deck : iDeck)
+        var x = -Int(self.frame.width)/2+80,y = Int(self.frame.height)/2-80
+        for var c : Card in iDeck{
+            c.position = CGPoint(x:0,y:0)
+            addChild(c)
+        }
+
         for var c : Card in iDeck{
             iDecks.push(c)
         }
         i = 0
         while(i < 7){
             playerDeck.append(iDecks.pop()!)
+            playerDeck[playerDeck.count-1].position = CGPoint(x:x,y:-Int(self.frame.height)/2+80)
             computerDeck.append(iDecks.pop()!)
+            computerDeck[computerDeck.count-1].isHidden = true
+            x+=80
             i+=1
         }
         while(iDecks.count > 0){
@@ -250,7 +259,7 @@ class GameScene: SKScene {
         addChild(yellow9)
         drawPile.push(yellow10)
         addChild(yellow10)*/
-        
+    
         //divide into intial groups of cards
         i = 1
         while i <= 10 {
@@ -287,7 +296,6 @@ class GameScene: SKScene {
     
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
-        
         if gameStarted == false
         {
             
