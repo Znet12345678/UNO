@@ -10,11 +10,10 @@ import SpriteKit
 import GameplayKit
 
 class GameScene: SKScene {
-    
+    var pTurn : Bool = true
     private var label : SKLabelNode?
     private var spinnyNode : SKShapeNode?
-    
-    
+
     
     //whos turn 1:player 2:cpu
     var currentTurn:Int = 1
@@ -27,6 +26,7 @@ class GameScene: SKScene {
     var playerDeck:[Card] = []
     //computer's cards
     var computerDeck:[Card] = []
+    var gmPlyr :GameManagerPlayer?
     //creates a LIFO structure
     struct Stack {
         //make the array properties part of stack, use.array for array functionality
@@ -52,7 +52,7 @@ class GameScene: SKScene {
     //players play their card and place here
     var pool : [Card] = []
     //players draw cards from
-    var drawPile : [Card] = []
+    var drawPile : Stack = Stack()
     //NOTE THIS IS NOT GOING TO STAY
     
     //all Cards initalized here (IK hard code is bad but i get nullPointer issues. If you figure a better way thats great)
@@ -153,9 +153,13 @@ class GameScene: SKScene {
             x+=80
             i+=1
         }
+        print(iDecks.count)
         while(iDecks.count > 0){
-            drawPile.append(iDecks.pop()!)
+            drawPile.push(iDecks.pop()!)
         }
+        print(drawPile.count)
+        gmPlyr = GameManagerPlayer()
+
         /*drawPile.push(red1)
         red1.position = CGPoint(x: 100, y: 200)
         addChild(red1)
@@ -267,18 +271,17 @@ class GameScene: SKScene {
             computerDraw()
             i += 1
         }
+        
     }
     //player takes a card from the draw pile
     func playerDraw()
     {
-        playerDeck.append(drawPile[drawPile.count-1])
-        drawPile.remove(at: drawPile.count-1)
+        playerDeck.append(drawPile.pop()!)
     }
     //computer takes a card from the draw pile
     func computerDraw()
     {
-        computerDeck.append(drawPile[drawPile.count-1])
-        drawPile.remove(at: drawPile.count-1)
+        computerDeck.append(drawPile.pop()!)
     }
     //checks to see if either the player or cpu has meet the parameters to win
     func checkDeckSize()
@@ -328,30 +331,41 @@ class GameScene: SKScene {
         
         
     }
-    
-    
+
     func touchDown(atPoint pos : CGPoint) {
-        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
+        /*if let n = self.spinnyNode?.copy() as! SKShapeNode? {
             n.position = pos
             n.strokeColor = SKColor.green
             self.addChild(n)
+        }*/
+        if(pTurn){
+            if(Int(pos.y) < -Int(self.frame.height)/3){
+                for var c in playerDeck{
+                    if(abs(c.position.x-pos.x) <= 50 && abs(c.position.y-pos.y) <= 100){
+                        gmPlyr?.PlayCard(c: c)
+                    }
+                }
+            }else if(pos.y <= 37 && pos.y >= -37) && (pos.x <= 25 &&  pos.x >= -25){
+                gmPlyr?.draw()
+            }
         }
     }
     
     func touchMoved(toPoint pos : CGPoint) {
-        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
+        /*if let n = self.spinnyNode?.copy() as! SKShapeNode? {
             n.position = pos
             n.strokeColor = SKColor.blue
             self.addChild(n)
-        }
+        }*/
+        
     }
     
     func touchUp(atPoint pos : CGPoint) {
-        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
+        /*if let n = self.spinnyNode?.copy() as! SKShapeNode? {
             n.position = pos
             n.strokeColor = SKColor.red
             self.addChild(n)
-        }
+        }*/
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
