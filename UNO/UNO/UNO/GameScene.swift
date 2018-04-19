@@ -324,7 +324,12 @@ class GameScene: SKScene {
                     if(abs(c.position.x-pos.x) <= 50 && abs(c.position.y-pos.y) <= 75){
                         gmPlyr?.PlayCard(c: c)
                         playerDeck = (gmPlyr?.getPDeck())!
-                        pool = gmPlyr?.getPool()
+                        let r : Int = Int(arc4random()) % (drawPile.count-1)
+                        if let dup = pool{
+                            drawPile.insert(c: dup, indx: r)
+                        }
+                        pool?.removeFromParent()
+                        pool = c
                         drawPile = (gmPlyr?.getDrawPile())!
                     }
                 }

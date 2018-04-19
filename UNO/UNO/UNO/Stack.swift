@@ -27,6 +27,9 @@ class Stack {
     func peek() -> Card? {
         return array.last
     }
+    func insert(c : Card, indx : Int){
+        array.insert(c, at: indx)
+    }
     init(){
         
     }

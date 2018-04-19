@@ -39,11 +39,7 @@ class GameManagerPlayer{
 
             c.position.x = CGFloat(-Int(frame.height)/4)
             c.position.y = 0
-            if let dup = pool{
-                let r : Int = Int(arc4random()) % (playerDeck.count-1)
-                playerDeck.insert(dup, at: r)
-            }
-            pool = c
+          
             removeFromHand(c:c)
          //   pTurn = false
         }
