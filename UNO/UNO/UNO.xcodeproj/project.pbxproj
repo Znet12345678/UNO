@@ -16,6 +16,9 @@
 		2ADE0C0120767D150093FB33 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2ADE0C0020767D150093FB33 /* Assets.xcassets */; };
 		2ADE0C0420767D150093FB33 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2ADE0C0220767D150093FB33 /* LaunchScreen.storyboard */; };
 		2ADE0C0C20767E5A0093FB33 /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ADE0C0B20767E5A0093FB33 /* Card.swift */; };
+		3C8460F020863AA80085C36F /* gmcomputer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C8460EF20863AA80085C36F /* gmcomputer.swift */; };
+		3C8460F220863ABB0085C36F /* Opponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C8460F120863ABB0085C36F /* Opponent.swift */; };
+		3C8460F420863D550085C36F /* GameRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C8460F320863D550085C36F /* GameRules.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +33,9 @@
 		2ADE0C0320767D150093FB33 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		2ADE0C0520767D150093FB33 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2ADE0C0B20767E5A0093FB33 /* Card.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Card.swift; sourceTree = "<group>"; };
+		3C8460EF20863AA80085C36F /* gmcomputer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = gmcomputer.swift; sourceTree = "<group>"; };
+		3C8460F120863ABB0085C36F /* Opponent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Opponent.swift; sourceTree = "<group>"; };
+		3C8460F320863D550085C36F /* GameRules.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameRules.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,6 +72,9 @@
 				2ADE0BF320767D140093FB33 /* AppDelegate.swift */,
 				2ADE0BF720767D140093FB33 /* Actions.sks */,
 				2ADE0BF920767D140093FB33 /* GameScene.swift */,
+				3C8460EF20863AA80085C36F /* gmcomputer.swift */,
+				3C8460F120863ABB0085C36F /* Opponent.swift */,
+				3C8460F320863D550085C36F /* GameRules.swift */,
 				2ADE0BFB20767D140093FB33 /* GameViewController.swift */,
 				2ADE0C0B20767E5A0093FB33 /* Card.swift */,
 				2ADE0BFD20767D140093FB33 /* Main.storyboard */,
@@ -152,8 +161,11 @@
 			files = (
 				2ADE0BFA20767D140093FB33 /* GameScene.swift in Sources */,
 				2ADE0BFC20767D140093FB33 /* GameViewController.swift in Sources */,
+				3C8460F420863D550085C36F /* GameRules.swift in Sources */,
+				3C8460F220863ABB0085C36F /* Opponent.swift in Sources */,
 				2ADE0BF420767D140093FB33 /* AppDelegate.swift in Sources */,
 				2ADE0C0C20767E5A0093FB33 /* Card.swift in Sources */,
+				3C8460F020863AA80085C36F /* gmcomputer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

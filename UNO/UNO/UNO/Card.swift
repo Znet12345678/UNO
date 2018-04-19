@@ -25,7 +25,7 @@ import SpriteKit
         let clr: color
         let typ: type
         let num: Int
-        let frontTexture: SKTexture
+        var frontTexture: SKTexture
         let backTexture: SKTexture
       
         
@@ -46,7 +46,7 @@ import SpriteKit
                 color = "blue"
             }
             frontTexture = SKTexture(imageNamed: "unocard_\(color)_\(num)")
-            /*switch typ {
+            switch typ {
             case .normal:
                 switch clr {
                 case .red:
@@ -161,7 +161,7 @@ import SpriteKit
                 frontTexture = SKTexture(imageNamed: "unocard_13")
             default:
                 frontTexture = SKTexture(imageNamed: "unocard_front")
-            }*/
+            }
             
             super.init(texture: frontTexture, color: .clear,size: frontTexture.size())
             
