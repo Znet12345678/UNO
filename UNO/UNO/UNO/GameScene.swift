@@ -9,6 +9,7 @@
 import SpriteKit
 import GameplayKit
 
+
 class GameScene: SKScene {
     var pTurn : Bool = true
     private var label : SKLabelNode?
@@ -28,29 +29,8 @@ class GameScene: SKScene {
     var computerDeck:[Card] = []
     var gmPlyr :GameManagerPlayer?
     //creates a LIFO structure
-    struct Stack {
-        //make the array properties part of stack, use.array for array functionality
-        fileprivate var array: [Card] = []
-        var count : Int = 0
-        //addcards to the last position of the array
-        mutating func push(_ element:Card)
-        {
-            array.append(element)
-            count+=1
-        }
-        //take the last card from the array removing it and returning it
-        mutating func pop() -> Card?
-        {
-            count-=1
-            return array.popLast()
-        }
-        //returns the last card in the array
-        func peek() -> Card? {
-            return array.last
-        }
-    }
-    //players play their card and place here
-    var pool : [Card] = []
+       //players play their card and place here
+    var pool : Card?
     //players draw cards from
     var drawPile : Stack = Stack()
     //NOTE THIS IS NOT GOING TO STAY
@@ -158,7 +138,7 @@ class GameScene: SKScene {
             drawPile.push(iDecks.pop()!)
         }
         print(drawPile.count)
-        gmPlyr = GameManagerPlayer()
+        gmPlyr = GameManagerPlayer(playerDeck: playerDeck, pTurn: pTurn, pool: pool, drawPile: drawPile, frame: self.frame)
 
         /*drawPile.push(red1)
         red1.position = CGPoint(x: 100, y: 200)
@@ -339,14 +319,20 @@ class GameScene: SKScene {
             self.addChild(n)
         }*/
         if(pTurn){
-            if(Int(pos.y) < -Int(self.frame.height)/3){
+            if(Int(pos.y) < -37){
                 for var c in playerDeck{
-                    if(abs(c.position.x-pos.x) <= 50 && abs(c.position.y-pos.y) <= 100){
+                    if(abs(c.position.x-pos.x) <= 50 && abs(c.position.y-pos.y) <= 75){
                         gmPlyr?.PlayCard(c: c)
+                        playerDeck = (gmPlyr?.getPDeck())!
+                        pool = gmPlyr?.getPool()
+                        drawPile = (gmPlyr?.getDrawPile())!
                     }
                 }
             }else if(pos.y <= 37 && pos.y >= -37) && (pos.x <= 25 &&  pos.x >= -25){
                 gmPlyr?.draw()
+                playerDeck = (gmPlyr?.getPDeck())!
+                pool = gmPlyr?.getPool()
+                drawPile = (gmPlyr?.getDrawPile())!
             }
         }
     }

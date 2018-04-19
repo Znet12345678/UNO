@@ -17,6 +17,7 @@
 		2ADE0C0420767D150093FB33 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2ADE0C0220767D150093FB33 /* LaunchScreen.storyboard */; };
 		2ADE0C0C20767E5A0093FB33 /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ADE0C0B20767E5A0093FB33 /* Card.swift */; };
 		3A90E6B720863AB100B8BD6B /* GameManagerPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A90E6B620863AB100B8BD6B /* GameManagerPlayer.swift */; };
+		3AE773242088CF4500A54AED /* Stack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AE773232088CF4500A54AED /* Stack.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +33,7 @@
 		2ADE0C0520767D150093FB33 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2ADE0C0B20767E5A0093FB33 /* Card.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Card.swift; sourceTree = "<group>"; };
 		3A90E6B620863AB100B8BD6B /* GameManagerPlayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameManagerPlayer.swift; sourceTree = "<group>"; };
+		3AE773232088CF4500A54AED /* Stack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stack.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +77,7 @@
 				2ADE0C0220767D150093FB33 /* LaunchScreen.storyboard */,
 				2ADE0C0520767D150093FB33 /* Info.plist */,
 				3A90E6B620863AB100B8BD6B /* GameManagerPlayer.swift */,
+				3AE773232088CF4500A54AED /* Stack.swift */,
 			);
 			path = UNO;
 			sourceTree = "<group>";
@@ -157,6 +160,7 @@
 				2ADE0BFC20767D140093FB33 /* GameViewController.swift in Sources */,
 				2ADE0BF420767D140093FB33 /* AppDelegate.swift in Sources */,
 				3A90E6B720863AB100B8BD6B /* GameManagerPlayer.swift in Sources */,
+				3AE773242088CF4500A54AED /* Stack.swift in Sources */,
 				2ADE0C0C20767E5A0093FB33 /* Card.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

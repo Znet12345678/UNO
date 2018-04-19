@@ -8,29 +8,24 @@
 
 import Foundation
 import UIKit
-struct Stack {
-    //make the array properties part of stack, use.array for array functionality
-    fileprivate var array: [Card] = []
-    var count : Int = 0
-    //addcards to the last position of the array
-    mutating func push(_ element:Card)
-    {
-        array.append(element)
-        count+=1
-    }
-    //take the last card from the array removing it and returning it
-    mutating func pop() -> Card?
-    {
-        count-=1
-        return array.popLast()
-    }
-    //returns the last card in the array
-    func peek() -> Card? {
-        return array.last
-    }
-}
 class GameManagerPlayer{
-    func removeFromHand(c : Card,playerDeck : [Card]){
+    var playerDeck : [Card] = []
+    var pTurn : Bool = true
+    var pool : Card?
+    var drawPile : Stack = Stack()
+    var frame : CGRect = CGRect()
+    init(playerDeck:[Card],pTurn:Bool,pool:Card?,drawPile:Stack,frame : CGRect){
+        self.playerDeck = playerDeck
+        self.pTurn = pTurn
+        self.pool = pool
+        self.drawPile = drawPile
+        self.frame = frame
+        
+    }
+    func changeTurn(){
+        pTurn = !pTurn
+    }
+    func removeFromHand(c : Card){
         var indx = 0
         while(indx < playerDeck.count){
             if(c == playerDeck[indx]){
@@ -39,28 +34,44 @@ class GameManagerPlayer{
             indx+=1
         }
     }
-    func PlayCard(c : Card, frame : CGRect,pool : Card){
+    func PlayCard(c : Card){
         if(pTurn){
-            pool.append(c)
-            c.position.x = CGFloat(-Int(frame.height)/2+8+0)
+
+            c.position.x = CGFloat(-Int(frame.height)/4)
             c.position.y = 0
+            if let dup = pool{
+                let r : Int = Int(arc4random()) % (playerDeck.count-1)
+                playerDeck.insert(dup, at: r)
+            }
+            pool = c
             removeFromHand(c:c)
          //   pTurn = false
         }
     }
     func draw(){
-        if(pTurn){
-            print(drawPile.count)
+        if(pTurn && drawPile.count > 0){
             let c = drawPile.pop()!
-            var posX : Int = Int(playerDeck[playerDeck.count-1].position.x),posY : Int = Int(playerDeck[playerDeck.count-1].position.y)
-            if posX + 80 > Int(self.frame.width)/2{
-                posX = -Int(self.frame.width)/2+80;
+            var posX : Int = playerDeck.count == 0 ? -Int(self.frame.width)/2+80 : Int(playerDeck[playerDeck.count-1].position.x),posY : Int = playerDeck.count == 0 ? -Int(self.frame.height)/2+80 : Int(playerDeck[playerDeck.count-1].position.y)
+            if posX + 80 > Int(frame.width)/2{
+                posX = -Int(frame.width)/2+80;
                 posY+=100
             }
-            c.position.x = CGFloat(posX)
+            c.position.x = CGFloat(posX+80)
             c.position.y = CGFloat(posY)
             playerDeck.append(c)
         //    pTurn = false
         }
+    }
+    func getPDeck()->[Card]{
+        return playerDeck
+    }
+    func getPool()->Card?{
+        if let pool = pool{
+            return pool
+        }
+        return nil
+    }
+    func getDrawPile()->Stack{
+        return drawPile
     }
 }
