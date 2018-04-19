@@ -14,8 +14,7 @@ class GameScene: SKScene {
     var pTurn : Bool = true
     private var label : SKLabelNode?
     private var spinnyNode : SKShapeNode?
-
-    
+    var gmcomp :gmcomputer?
     //whos turn 1:player 2:cpu
     var currentTurn:Int = 1
     //is game running
@@ -37,52 +36,7 @@ class GameScene: SKScene {
     
     //all Cards initalized here (IK hard code is bad but i get nullPointer issues. If you figure a better way thats great)
         //red
-        /*let red1 = Card(clr: .red, typ: .normal, num: 1)
-        let red2 = Card(clr: .red, typ: .normal, num: 2)
-        let red3 = Card(clr: .red, typ: .normal, num: 3)
-        let red4 = Card(clr: .red, typ: .normal, num: 4)
-        let red5 = Card(clr: .red, typ: .normal, num: 5)
-        let red6 = Card(clr: .red, typ: .normal, num: 6)
-        let red7 = Card(clr: .red, typ: .normal, num: 7)
-        let red8 = Card(clr: .red, typ: .normal, num: 8)
-        let red9 = Card(clr: .red, typ: .normal, num: 9)
-        let red10 = Card(clr: .red, typ: .normal, num: 10)
-        //green
-        let green1 = Card(clr: .red, typ: .normal, num: 1)
-        let green2 = Card(clr: .red, typ: .normal, num: 2)
-        let green3 = Card(clr: .red, typ: .normal, num: 3)
-        let green4 = Card(clr: .red, typ: .normal, num: 4)
-        let green5 = Card(clr: .red, typ: .normal, num: 5)
-        let green6 = Card(clr: .red, typ: .normal, num: 6)
-        let green7 = Card(clr: .red, typ: .normal, num: 7)
-        let green8 = Card(clr: .red, typ: .normal, num: 8)
-        let green9 = Card(clr: .red, typ: .normal, num: 9)
-        let green10 = Card(clr: .red, typ: .normal, num: 10)
-        //blue
-        let blue1 = Card(clr: .red, typ: .normal, num: 1)
-        let blue2 = Card(clr: .red, typ: .normal, num: 2)
-        let blue3 = Card(clr: .red, typ: .normal, num: 3)
-        let blue4 = Card(clr: .red, typ: .normal, num: 4)
-        let blue5 = Card(clr: .red, typ: .normal, num: 5)
-        let blue6 = Card(clr: .red, typ: .normal, num: 6)
-        let blue7 = Card(clr: .red, typ: .normal, num: 7)
-        let blue8 = Card(clr: .red, typ: .normal, num: 8)
-        let blue9 = Card(clr: .red, typ: .normal, num: 9)
-        let blue10 = Card(clr: .red, typ: .normal, num: 10)
-        //yellow
-        let yellow1 = Card(clr: .red, typ: .normal, num: 1)
-        let yellow2 = Card(clr: .red, typ: .normal, num: 2)
-        let yellow3 = Card(clr: .red, typ: .normal, num: 3)
-        let yellow4 = Card(clr: .red, typ: .normal, num: 4)
-        let yellow5 = Card(clr: .red, typ: .normal, num: 5)
-        let yellow6 = Card(clr: .red, typ: .normal, num: 6)
-        let yellow7 = Card(clr: .red, typ: .normal, num: 7)
-        let yellow8 = Card(clr: .red, typ: .normal, num: 8)
-        let yellow9 = Card(clr: .red, typ: .normal, num: 9)
-        let yellow10 = Card(clr: .red, typ: .normal, num: 10)
-    
-        */
-    func shuffle( deck: [Card])-> [Card]{
+            func shuffle( deck: [Card])-> [Card]{
         var i = deck.count-1
         var d = deck
         while(i >= 1){
@@ -114,13 +68,13 @@ class GameScene: SKScene {
             iDeck.append(Card(clr:.green,typ:.normal,num:i))
             i+=1
         }
-       iDeck = shuffle(deck : iDeck)
+
+       
         var x = -Int(self.frame.width)/2+80,y = Int(self.frame.height)/2-80
         for var c : Card in iDeck{
             c.position = CGPoint(x:0,y:0)
             addChild(c)
         }
-
         for var c : Card in iDeck{
             iDecks.push(c)
         }
@@ -133,116 +87,12 @@ class GameScene: SKScene {
             x+=80
             i+=1
         }
-        print(iDecks.count)
         while(iDecks.count > 0){
             drawPile.push(iDecks.pop()!)
         }
-        print(drawPile.count)
+        gmcomp = gmcomputer(pool: pool, computerDeck: computerDeck, frame: self.frame)
         gmPlyr = GameManagerPlayer(playerDeck: playerDeck, pTurn: pTurn, pool: pool, drawPile: drawPile, frame: self.frame)
-
-        /*drawPile.push(red1)
-        red1.position = CGPoint(x: 100, y: 200)
-        addChild(red1)
-        drawPile.push(red2)
-        red2.position = CGPoint(x: 100, y: 200)
-        addChild(red2)
-        drawPile.push(red3)
-        red3.position = CGPoint(x: 100, y: 200)
-        addChild(red3)
-        drawPile.push(red4)
-        red4.position = CGPoint(x: 100, y: 200)
-        addChild(red4)
-        drawPile.push(red5)
-        red5.position = CGPoint(x: 100, y: 200)
-        addChild(red5)
-        drawPile.push(red6)
-        red6.position = CGPoint(x: 100, y: 200)
-        addChild(red6)
-        drawPile.push(red7)
-        red7.position = CGPoint(x: 100, y: 200)
-        addChild(red7)
-        drawPile.push(red8)
-        red8.position = CGPoint(x: 100, y: 200)
-        addChild(red8)
-        drawPile.push(red9)
-        red9.position = CGPoint(x: 100, y: 200)
-        addChild(red9)
-        drawPile.push(red10)
-        red10.position = CGPoint(x: 100, y: 200)
-        addChild(red10)
-        //green
-        drawPile.push(green1)
-        green1.position = CGPoint(x: 100, y: 200)
-        addChild(green1)
-        drawPile.push(green2)
-        green2.position = CGPoint(x: 100, y: 200)
-        addChild(green2)
-        drawPile.push(green3)
-        green3.position = CGPoint(x: 100, y: 200)
-        addChild(green3)
-        drawPile.push(green4)
-        green4.position = CGPoint(x: 100, y: 200)
-        addChild(green4)
-        drawPile.push(green5)
-        green5.position = CGPoint(x: 100, y: 200)
-        addChild(green5)
-        drawPile.push(green6)
-        green6.position = CGPoint(x: 100, y: 200)
-        addChild(green6)
-        drawPile.push(green7)
-        green7.position = CGPoint(x: 100, y: 200)
-        addChild(green7)
-        drawPile.push(green8)
-        green8.position = CGPoint(x: 100, y: 200)
-        addChild(green8)
-        drawPile.push(green9)
-        green9.position = CGPoint(x: 100, y: 200)
-        addChild(green9)
-        drawPile.push(green10)
-        green10.position = CGPoint(x: 100, y: 200)
-        addChild(green10)
-        //blue
-        drawPile.push(blue1)
-        addChild(blue1)
-        drawPile.push(blue2)
-        addChild(blue2)
-        drawPile.push(blue3)
-        addChild(blue3)
-        drawPile.push(blue4)
-        addChild(blue4)
-        drawPile.push(blue5)
-        addChild(blue5)
-        drawPile.push(blue6)
-        addChild(blue6)
-        drawPile.push(blue7)
-        addChild(blue7)
-        drawPile.push(blue8)
-        addChild(blue8)
-        drawPile.push(blue9)
-        addChild(blue9)
-        drawPile.push(blue10)
-        addChild(blue10)
-        //yellow
-        drawPile.push(yellow1)
-        addChild(yellow1)
-        drawPile.push(yellow2)
-        addChild(yellow2)
-        drawPile.push(yellow3)
-        addChild(yellow3)
-        drawPile.push(yellow4)
-        addChild(yellow4)
-        drawPile.push(yellow5)
-        addChild(yellow5)
-        drawPile.push(yellow6)
-        addChild(yellow6)
-        drawPile.push(yellow7)
-        addChild(yellow7)
-        drawPile.push(yellow8)
-        addChild(yellow8)
-        drawPile.push(yellow9)
-        addChild(yellow9)
-        drawPile.push(yellow10)
-        addChild(yellow10)*/
+        
     
         //divide into intial groups of cards
         i = 1
@@ -324,16 +174,18 @@ class GameScene: SKScene {
                     if(abs(c.position.x-pos.x) <= 50 && abs(c.position.y-pos.y) <= 75){
                         gmPlyr?.PlayCard(c: c)
                         playerDeck = (gmPlyr?.getPDeck())!
-                        let r : Int = Int(arc4random()) % (drawPile.count-1)
+                        let r : Int = drawPile.count <= 1 ? 0 : Int(arc4random())%(drawPile.count-1)
                         if let dup = pool{
+                            dup.isHidden = false
                             drawPile.insert(c: dup, indx: r)
                         }
-                        pool?.removeFromParent()
+                        pool?.isHidden = true
                         pool = c
                         drawPile = (gmPlyr?.getDrawPile())!
                     }
                 }
             }else if(pos.y <= 37 && pos.y >= -37) && (pos.x <= 25 &&  pos.x >= -25){
+                print(drawPile.count)
                 gmPlyr?.draw()
                 playerDeck = (gmPlyr?.getPDeck())!
                 pool = gmPlyr?.getPool()

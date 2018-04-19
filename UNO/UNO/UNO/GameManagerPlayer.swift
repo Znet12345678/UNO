@@ -22,6 +22,9 @@ class GameManagerPlayer{
         self.frame = frame
         
     }
+    func updatePool(c : Card){
+        pool = c
+    }
     func changeTurn(){
         pTurn = !pTurn
     }

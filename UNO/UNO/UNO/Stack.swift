@@ -28,7 +28,11 @@ class Stack {
         return array.last
     }
     func insert(c : Card, indx : Int){
+        /*
+         *I know a stack isn't supposed to have this but I don't feel like changing everything to an arraylist
+         */
         array.insert(c, at: indx)
+        count+=1
     }
     init(){
         
