@@ -15,20 +15,24 @@ class GameRules {
     init(playerDeck : [Card],pool : Card?){
         self.playerDeck = playerDeck
         self.pool = pool
+        canPlay()
+    }
+    func update(playerDeck : [Card],pool : Card?){
+        playableCards = []
+        self.playerDeck = playerDeck
+        self.pool = pool
+        canPlay()
+        
     }
     func canPlay() {
-
-        let deck = playerDeck
+        
         
         if let previousCard = pool{
-    
-            
-            for cards in deck {
-                if cards.num == previousCard.num || cards.color == previousCard.color {
+            for cards in playerDeck {
+                if cards.num == previousCard.num || cards.clr == previousCard.clr {
                     playableCards.append(cards)
                 }
             }
-        
             for cards in playableCards {
                 cards.position.y.add(25)
             }

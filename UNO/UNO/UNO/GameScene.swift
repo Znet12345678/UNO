@@ -14,6 +14,7 @@ class GameScene: SKScene {
     var pTurn : Bool = true
     private var label : SKLabelNode?
     private var spinnyNode : SKShapeNode?
+    var gr : GameRules?
     var gmcomp :gmcomputer?
     //whos turn 1:player 2:cpu
     var currentTurn:Int = 1
@@ -52,6 +53,8 @@ class GameScene: SKScene {
     }
     var iDeck : [Card] = []
     var iDecks  = Stack()
+    var pStart :SKSpriteNode?,cStart : SKSpriteNode?, pEnd :SKSpriteNode?,cEnd:SKSpriteNode?,poolStart : SKSpriteNode?
+    var deck : SKSpriteNode?
     //takes all cards and assigns a location for them
     func fillDecks()
     {
@@ -59,6 +62,26 @@ class GameScene: SKScene {
         //CARD.position gives a location for the touchesMoved method to use for testing the drawing and rearranging of cards logic
         //addChild(CARD) activates the node to be used by the game handler
         NSLog("Filling deck")
+        for var child :  SKNode in self.children{
+            if child.name == "Deck"{
+                    deck = child as? SKSpriteNode
+            }
+            if child.name == "StartXPlayer"{
+                pStart = child as? SKSpriteNode
+            }
+            if child.name == "StartXComp"{
+                cStart = child as? SKSpriteNode
+            }
+            if child.name == "EndXPlayer"{
+                pEnd = child as? SKSpriteNode
+            }
+            if child.name == "EndXComp"{
+                cEnd = child as? SKSpriteNode
+            }
+            if child.name == "PoolPile"{
+                poolStart = child as? SKSpriteNode
+            }
+        }
         //NOTE @CARDS(BLUE & YELLOW STILL NEED TEMPORARY POSITIONS)
         var i = 0
         while(i < 11){
@@ -70,9 +93,9 @@ class GameScene: SKScene {
         }
 
        
-        var x = -Int(self.frame.width)/2+80,y = Int(self.frame.height)/2-80
+        var x = Int((pStart?.position.x)!),y = Int((pStart?.position.y)!)
         for var c : Card in iDeck{
-            c.position = CGPoint(x:0,y:0)
+            c.position = CGPoint(x:(deck?.position.x)!,y:(deck?.position.y)!)
             addChild(c)
         }
         for var c : Card in iDeck{
@@ -81,7 +104,7 @@ class GameScene: SKScene {
         i = 0
         while(i < 7){
             playerDeck.append(iDecks.pop()!)
-            playerDeck[playerDeck.count-1].position = CGPoint(x:x,y:-Int(self.frame.height)/2+80)
+            playerDeck[playerDeck.count-1].position = CGPoint(x:x,y:y)
             computerDeck.append(iDecks.pop()!)
             computerDeck[computerDeck.count-1].isHidden = true
             x+=80
@@ -90,8 +113,8 @@ class GameScene: SKScene {
         while(iDecks.count > 0){
             drawPile.push(iDecks.pop()!)
         }
-        gmcomp = gmcomputer(pool: pool, computerDeck: computerDeck, frame: self.frame)
-        gmPlyr = GameManagerPlayer(playerDeck: playerDeck, pTurn: pTurn, pool: pool, drawPile: drawPile, frame: self.frame)
+        gmcomp = gmcomputer(pool: pool, computerDeck: computerDeck, cBegin:(cStart?.position)!,cEnd:(cEnd?.position)!)
+        gmPlyr = GameManagerPlayer(playerDeck: playerDeck, pTurn: pTurn, pool: pool, drawPile: drawPile, pStart:(pStart?.position)!, pEnd: (pEnd?.position)!,poolP:(poolStart?.position)!)
         
     
         //divide into intial groups of cards
@@ -101,7 +124,7 @@ class GameScene: SKScene {
             computerDraw()
             i += 1
         }
-        
+        gr = GameRules(playerDeck: playerDeck, pool: pool)
     }
     //player takes a card from the draw pile
     func playerDraw()
@@ -172,24 +195,39 @@ class GameScene: SKScene {
             if(Int(pos.y) < -37){
                 for var c in playerDeck{
                     if(abs(c.position.x-pos.x) <= 50 && abs(c.position.y-pos.y) <= 75){
-                        gmPlyr?.PlayCard(c: c)
-                        playerDeck = (gmPlyr?.getPDeck())!
-                        let r : Int = drawPile.count <= 1 ? 0 : Int(arc4random())%(drawPile.count-1)
-                        if let dup = pool{
-                            dup.isHidden = false
-                            drawPile.insert(c: dup, indx: r)
+                        var canPlay : Bool = false
+                        gr?.update(playerDeck:playerDeck,pool:pool)
+                        print("\(playerDeck)____\(gr?.getPlayableCards())")
+                        for var pc in (gr?.getPlayableCards())!{
+                            if pc.isEqual(c){
+                                canPlay = true
+                            }
                         }
-                        pool?.isHidden = true
-                        pool = c
-                        drawPile = (gmPlyr?.getDrawPile())!
+                        if canPlay{
+                            gmPlyr?.PlayCard(c: c)
+
+                            playerDeck = (gmPlyr?.getPDeck())!
+                            let r : Int = drawPile.count <= 1 ? 0 : Int(arc4random())%(drawPile.count-1)
+                            if let dup = pool{
+                                dup.isHidden = false
+                                drawPile.insert(c: dup, indx: r)
+                            }
+                            pool?.isHidden = true
+                            pool = c
+                            drawPile = (gmPlyr?.getDrawPile())!
+                            gr?.update(playerDeck: playerDeck, pool: pool)
+                        }
+                        for var pc in (gr?.getPlayableCards())!{
+                            pc.position.y-=25
+                        }
                     }
                 }
             }else if(pos.y <= 37 && pos.y >= -37) && (pos.x <= 25 &&  pos.x >= -25){
-                print(drawPile.count)
                 gmPlyr?.draw()
                 playerDeck = (gmPlyr?.getPDeck())!
                 pool = gmPlyr?.getPool()
                 drawPile = (gmPlyr?.getDrawPile())!
+                gr?.update(playerDeck: playerDeck, pool: pool)
             }
         }
     }

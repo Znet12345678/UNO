@@ -9,20 +9,25 @@
 import Foundation
 import GameKit
 import UIKit
+import SpriteKit
+import GameplayKit
+
 
 class gmcomputer{
     var pool :Card?
+    var cBegin : CGPoint = CGPoint()
+    var cEnd : CGPoint = CGPoint()
     var playableCards : [Card] = []
     var computerDeck : [Card] = []
-    var frame : CGRect = CGRect()
     var gr : GameRules?
     let regularCardChance: Int = 75
     let specialCardChance: Int = 25
     var cTurn: Bool = false
-     init(pool : Card?,computerDeck : [Card], frame : CGRect){
+    init(pool : Card?,computerDeck : [Card],cBegin : CGPoint,cEnd : CGPoint){
         self.pool = pool
         self.computerDeck = computerDeck
-        self.frame = frame
+        self.cBegin = cBegin
+        self.cEnd = cEnd
     }
     func removFromHand(c: Card) {
         var index = 0
@@ -55,9 +60,9 @@ class gmcomputer{
             if let c = pool{
                 var posX: Int = Int(computerDeck[computerDeck.count-1].position.x)
                 var posY: Int = Int(computerDeck[computerDeck.count-1].position.y)
-                if posX + 80 > Int(self.frame.width)/2 {
-                    posX = -Int(self.frame.width)/2 + 80
-                    posY += 100
+                if posX + 80 > Int(cEnd.x) {
+                    posX = Int(cBegin.x)
+                    posY -= 100
                 }
                 c.position.x = CGFloat(posX)
                 c.position.y = CGFloat(posY)

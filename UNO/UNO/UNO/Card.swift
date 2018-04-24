@@ -54,7 +54,12 @@ import SpriteKit
         required init?(coder aDecoder: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
-        
+        override func isEqual(_ object: Any?) -> Bool {
+            if let cObject = object as? Card{
+                return cObject.clr == self.clr && cObject.num == self.num
+            }
+            return false
+        }
     
         
     }
