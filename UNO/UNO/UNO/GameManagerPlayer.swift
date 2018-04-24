@@ -53,7 +53,9 @@ class GameManagerPlayer{
 
             c.position.x = poolP.x
             c.position.y = poolP.y
-          
+            let neg = arc4random() % 2 == 0
+            c.zRotation = CGFloat(Double(arc4random()).truncatingRemainder(dividingBy: Double.pi/6) * (neg ? -1 : 1))
+            print(c.zRotation)
             removeFromHand(c:c)
          //   pTurn = false
         }
@@ -62,7 +64,7 @@ class GameManagerPlayer{
         var gr = GameRules(playerDeck:playerDeck,pool:pool)
         var pCards : [Card] = gr.getPlayableCards()
         var playable :Bool = false
-        if(pTurn && drawPile.count > 0 && pCards.count == 0){
+        if(pTurn && drawPile.count > 0){
             let c = drawPile.pop()!
 
             var posX : Int = playerDeck.count == 0 ? Int(pStart.x) : Int(playerDeck[playerDeck.count-1].position.x),posY : Int = playerDeck.count == 0 ? Int(pStart.y) : Int(playerDeck[playerDeck.count-1].position.y)
