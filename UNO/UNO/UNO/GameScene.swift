@@ -92,7 +92,7 @@ class GameScene: SKScene {
             i+=1
         }
 
-       
+        iDeck = shuffle(deck:iDeck)
         var x = Int((pStart?.position.x)!),y = Int((pStart?.position.y)!)
         for var c : Card in iDeck{
             c.position = CGPoint(x:(deck?.position.x)!,y:(deck?.position.y)!)
@@ -113,7 +113,7 @@ class GameScene: SKScene {
         while(iDecks.count > 0){
             drawPile.push(iDecks.pop()!)
         }
-        gmcomp = gmcomputer(pool: pool, computerDeck: computerDeck, cBegin:(cStart?.position)!,cEnd:(cEnd?.position)!)
+        gmcomp = gmcomputer(pool: pool, computerDeck: computerDeck, cBegin:(cStart?.position)!,cEnd:(cEnd?.position)!,poolP: (poolStart?.position)!,drawPile:drawPile)
         gmPlyr = GameManagerPlayer(playerDeck: playerDeck, pTurn: pTurn, pool: pool, drawPile: drawPile, pStart:(pStart?.position)!, pEnd: (pEnd?.position)!,poolP:(poolStart?.position)!)
         
     
@@ -215,7 +215,7 @@ class GameScene: SKScene {
                             pool?.isHidden = true
                             pool = c
                             drawPile = (gmPlyr?.getDrawPile())!
-                            gr?.update(playerDeck: playerDeck, pool: pool)
+                            
                         }
                         for var pc in (gr?.getPlayableCards())!{
                             pc.position.y-=25
@@ -227,9 +227,13 @@ class GameScene: SKScene {
                 playerDeck = (gmPlyr?.getPDeck())!
                 pool = gmPlyr?.getPool()
                 drawPile = (gmPlyr?.getDrawPile())!
-                gr?.update(playerDeck: playerDeck, pool: pool)
+
             }
         }
+        gmcomp?.updatePool(c: pool)
+        gmcomp?.act()
+        pool = gmcomp?.getPool()
+        gr?.update(playerDeck: playerDeck, pool: pool)
     }
     
     func touchMoved(toPoint pos : CGPoint) {

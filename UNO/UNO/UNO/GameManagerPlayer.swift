@@ -59,6 +59,9 @@ class GameManagerPlayer{
             removeFromHand(c:c)
          //   pTurn = false
         }
+        if let p = pool{
+            c.zPosition = (p.zPosition)+1
+        }
     }
     func draw(){
         var gr = GameRules(playerDeck:playerDeck,pool:pool)
@@ -83,10 +86,7 @@ class GameManagerPlayer{
         return playerDeck
     }
     func getPool()->Card?{
-        if let pool = pool{
-            return pool
-        }
-        return nil
+       return pool
     }
     func getDrawPile()->Stack{
         return drawPile

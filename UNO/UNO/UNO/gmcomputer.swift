@@ -22,14 +22,24 @@ class gmcomputer{
     var gr : GameRules?
     let regularCardChance: Int = 75
     let specialCardChance: Int = 25
+    var poolP : CGPoint = CGPoint()
     var cTurn: Bool = false
-    init(pool : Card?,computerDeck : [Card],cBegin : CGPoint,cEnd : CGPoint){
+    var drawPile : Stack = Stack()
+    init(pool : Card?,computerDeck : [Card],cBegin : CGPoint,cEnd : CGPoint,poolP : CGPoint,drawPile : Stack){
         self.pool = pool
         self.computerDeck = computerDeck
         self.cBegin = cBegin
         self.cEnd = cEnd
+        self.gr = GameRules(playerDeck: self.computerDeck, pool: self.pool)
+        self.playableCards = (self.gr?.getPlayableCards())!
+        self.poolP = poolP
+        self.drawPile = drawPile
+
     }
-    func removFromHand(c: Card) {
+    func updatePool(c : Card?){
+        self.pool = c
+    }
+    func removeFromHand(c: Card) {
         var index = 0
         while(index < computerDeck.count) {
             if c == computerDeck[index] {
@@ -38,37 +48,83 @@ class gmcomputer{
         index += 1
         }
     }
+    func act(){
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(2), execute: {
+            self.playableCards = (self.gr?.getPlayableCards())!
+            if self.playableCards.count == 0{
+                print("Computer draws")
+                self.draw()
+            }else{
+                print("Computer plays")
+                self.chooseRandomCard(regProb: 10, specProb: 3)
+            }
+        })
+    }
     func updatePool(c : Card){
         pool = c
     }
+    func getPool()->Card?{return pool}
     func playCard(c: Card) {
-        if (cTurn) {
-            if let prevCard = pool{
-                
+        c.isHidden = false
+        var gr = GameRules(playerDeck:computerDeck,pool:pool)
+        var pCards : [Card] = gr.getPlayableCards()
+        var playable :Bool = false
+        for var pc in pCards{
+            if(pc.isEqual(c)){
+                playable = true
             }
-            pool = c
-            c.position.x = CGFloat(-Int(c.frame.height)/2 + 8)
-
-            c.position.y = 0
-            removFromHand(c : c)
         }
+        if(playable){
+            
+            c.position.x = poolP.x
+            c.position.y = poolP.y
+            let neg = arc4random() % 2 == 0
+            c.zRotation = CGFloat(Double(arc4random()).truncatingRemainder(dividingBy: Double.pi/6) * (neg ? -1 : 1))
+            print(c.zRotation)
+            removeFromHand(c:c)
+        }
+        if let p = pool{
+            c.zPosition = (p.zPosition)+1
+        }
+        gr.update(playerDeck: computerDeck, pool: pool)
     }
 
     func draw() {
-        if(cTurn) {
-            //pop is a stack only function
-            if let c = pool{
-                var posX: Int = Int(computerDeck[computerDeck.count-1].position.x)
-                var posY: Int = Int(computerDeck[computerDeck.count-1].position.y)
-                if posX + 80 > Int(cEnd.x) {
-                    posX = Int(cBegin.x)
-                    posY -= 100
-                }
-                c.position.x = CGFloat(posX)
-                c.position.y = CGFloat(posY)
-                computerDeck.append(c)
+        var gr = GameRules(playerDeck:computerDeck,pool:pool)
+        var pCards : [Card] = gr.getPlayableCards()
+        var playable :Bool = false
+        if(drawPile.count > 0){
+            let c = drawPile.pop()!
+            
+            var posX : Int = computerDeck.count == 0 ? Int(cBegin.x) : Int(computerDeck[computerDeck.count-1].position.x),posY : Int = computerDeck.count == 0 ? Int(cBegin.y) : Int(computerDeck[computerDeck.count-1].position.y)
+            if posX + 80 > Int(cEnd.x){
+                posX = Int(cBegin.x);
+                posY+=100
+            }
+            c.position.x = CGFloat(posX+80)
+            c.position.y = CGFloat(posY)
+            c.isHidden = false
+            computerDeck.append(c)
+            gr.update(playerDeck: computerDeck, pool: pool)
+            //    pTurn = false
+        }
+
+    }
+    func hasSpecial(cards : [Card])->Bool{
+        for var c : Card in cards{
+            if(c.num > 9){
+                return true
             }
         }
+        return false
+    }
+    func onlyHasSpecial(cards : [Card])->Bool{
+        for var c : Card in cards{
+            if(c.num <= 9){
+                return false
+            }
+        }
+        return true
     }
     func chooseRandomCard(regProb: Int, specProb: Int) {
         gr = GameRules(playerDeck: computerDeck, pool: pool)
@@ -88,20 +144,20 @@ class gmcomputer{
             //Determine whether the CPU will choose a regular or special card
             let regChance = abs(randomNumber - probabilityOfReg)
             let specChance = abs(randomNumber - probabilityOfSpecial)
-            
+            let hasSpecialB : Bool = hasSpecial(cards: playableCards)
             //Chooses the smallest difference
-            if regChance < specChance {
+            if (regChance < specChance && hasSpecialB) || onlyHasSpecial(cards: playableCards) {
                 for card in playableCards {
                     //Checks if card is a special card; the value of each card is in the picture names
                     //0-9 is regular; 10-14 is special
                     if card.num > 9 {
                         //Removes all usable special cards
-                        playableCards.remove(at: card.num)
                         
                         //Picks a random number that aligns with the indexes of the remaining
                         let randomNumber: Int = Int(arc4random_uniform(UInt32(playableCards.count)))
                         //Plays the card
                         playCard(c: playableCards[randomNumber])
+                        break
                     }
                 }
             } else {
@@ -110,16 +166,17 @@ class gmcomputer{
                     //0-9 is regular; 10-14 is special
                     if card.num <= 9 {
                         //Removes all usable regular cards
-                        playableCards.remove(at: card.num)
                         
                         //Picks a random number that aligns with the indexes of the remaining
                         let randomNumber: Int = Int(arc4random_uniform(UInt32(playableCards.count)))
                         //Plays the card
                         playCard(c: playableCards[randomNumber])
+                        break
                     }
                 }
             }
         }
+        gr?.update(playerDeck: computerDeck, pool: pool)
     }
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

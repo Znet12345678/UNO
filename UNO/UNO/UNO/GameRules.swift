@@ -33,9 +33,9 @@ class GameRules {
                     playableCards.append(cards)
                 }
             }
-            for cards in playableCards {
-                cards.position.y.add(25)
-            }
+            //for cards in playableCards {
+                //cards.position.y.add(25)
+           // }
         }else{
             playableCards = playerDeck
         }
