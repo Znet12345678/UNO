@@ -16,6 +16,7 @@ class GameManagerPlayer{
     var pStart : CGPoint = CGPoint()
     var pEnd : CGPoint = CGPoint()
     var poolP : CGPoint = CGPoint()
+    var nxtzPos : Int =  0
     init(playerDeck:[Card],pTurn:Bool,pool:Card?,drawPile:Stack,pStart : CGPoint,pEnd : CGPoint,poolP : CGPoint){
         self.playerDeck = playerDeck
         self.pTurn = pTurn
@@ -25,7 +26,10 @@ class GameManagerPlayer{
         self.poolP = poolP
         self.pEnd = pEnd
     }
-    func updatePool(c : Card){
+    func updatezPos(zpos : Int){
+        self.nxtzPos = zpos
+    }
+    func updatePool(c : Card?){
         pool = c
     }
     func changeTurn(){
@@ -50,7 +54,7 @@ class GameManagerPlayer{
             }
         }
         if(pTurn && playable){
-
+            c.zPosition = CGFloat(nxtzPos)
             c.position.x = poolP.x
             c.position.y = poolP.y
             let neg = arc4random() % 2 == 0
@@ -59,9 +63,8 @@ class GameManagerPlayer{
             removeFromHand(c:c)
          //   pTurn = false
         }
-        if let p = pool{
-            c.zPosition = (p.zPosition)+1
-        }
+       
+        print("Player zPos: \(nxtzPos)")
     }
     func draw(){
         var gr = GameRules(playerDeck:playerDeck,pool:pool)

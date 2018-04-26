@@ -15,6 +15,7 @@ import GameplayKit
 
 class gmcomputer{
     var pool :Card?
+    var done : Bool = true
     var cBegin : CGPoint = CGPoint()
     var cEnd : CGPoint = CGPoint()
     var playableCards : [Card] = []
@@ -25,6 +26,7 @@ class gmcomputer{
     var poolP : CGPoint = CGPoint()
     var cTurn: Bool = false
     var drawPile : Stack = Stack()
+    var nxtzPos : Int = 0
     init(pool : Card?,computerDeck : [Card],cBegin : CGPoint,cEnd : CGPoint,poolP : CGPoint,drawPile : Stack){
         self.pool = pool
         self.computerDeck = computerDeck
@@ -34,10 +36,16 @@ class gmcomputer{
         self.playableCards = (self.gr?.getPlayableCards())!
         self.poolP = poolP
         self.drawPile = drawPile
-
+        
+    }
+    func updatezPos(zpos : Int){
+        self.nxtzPos = zpos
     }
     func updatePool(c : Card?){
         self.pool = c
+    }
+    func doneF()->Bool{
+        return done
     }
     func removeFromHand(c: Card) {
         var index = 0
@@ -49,6 +57,7 @@ class gmcomputer{
         }
     }
     func act(){
+        done = false
         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(2), execute: {
             self.playableCards = (self.gr?.getPlayableCards())!
             if self.playableCards.count == 0{
@@ -58,6 +67,7 @@ class gmcomputer{
                 print("Computer plays")
                 self.chooseRandomCard(regProb: 10, specProb: 3)
             }
+            self.done = true
         })
     }
     func updatePool(c : Card){
@@ -66,6 +76,7 @@ class gmcomputer{
     func getPool()->Card?{return pool}
     func playCard(c: Card) {
         c.isHidden = false
+       
         var gr = GameRules(playerDeck:computerDeck,pool:pool)
         var pCards : [Card] = gr.getPlayableCards()
         var playable :Bool = false
@@ -75,7 +86,7 @@ class gmcomputer{
             }
         }
         if(playable){
-            
+            c.zPosition = CGFloat(nxtzPos)
             c.position.x = poolP.x
             c.position.y = poolP.y
             let neg = arc4random() % 2 == 0
@@ -83,10 +94,9 @@ class gmcomputer{
             print(c.zRotation)
             removeFromHand(c:c)
         }
-        if let p = pool{
-            c.zPosition = (p.zPosition)+1
-        }
+        
         gr.update(playerDeck: computerDeck, pool: pool)
+        print("comp zPos:\(nxtzPos)")
     }
 
     func draw() {
@@ -103,7 +113,7 @@ class gmcomputer{
             }
             c.position.x = CGFloat(posX+80)
             c.position.y = CGFloat(posY)
-            c.isHidden = false
+            c.isHidden = true
             computerDeck.append(c)
             gr.update(playerDeck: computerDeck, pool: pool)
             //    pTurn = false

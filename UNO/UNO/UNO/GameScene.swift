@@ -16,6 +16,7 @@ class GameScene: SKScene {
     private var spinnyNode : SKShapeNode?
     var gr : GameRules?
     var gmcomp :gmcomputer?
+    var zPos : Int = 0
     //whos turn 1:player 2:cpu
     var currentTurn:Int = 1
     //is game running
@@ -191,7 +192,14 @@ class GameScene: SKScene {
             n.strokeColor = SKColor.green
             self.addChild(n)
         }*/
+        pTurn = (gmcomp?.doneF())!
+        print("Pool zPos: \(pool?.zPosition)")
         if(pTurn){
+            zPos+=1
+            pool = gmcomp?.getPool()
+            gmPlyr?.updatePool(c: pool)
+            gmPlyr?.updatezPos(zpos: zPos)
+            gmcomp?.updatezPos(zpos: zPos)
             if(Int(pos.y) < -37){
                 for var c in playerDeck{
                     if(abs(c.position.x-pos.x) <= 50 && abs(c.position.y-pos.y) <= 75){
@@ -212,13 +220,15 @@ class GameScene: SKScene {
                                 dup.isHidden = false
                                 drawPile.insert(c: dup, indx: r)
                             }
-                            pool?.isHidden = true
+                       //     pool?.isHidden = true
                             pool = c
+                    
                             drawPile = (gmPlyr?.getDrawPile())!
+                            zPos+=1
                             
                         }
                         for var pc in (gr?.getPlayableCards())!{
-                            pc.position.y-=25
+                         //   pc.position.y-=25
                         }
                     }
                 }
@@ -229,13 +239,16 @@ class GameScene: SKScene {
                 drawPile = (gmPlyr?.getDrawPile())!
 
             }
+        
+            gmcomp?.updatezPos(zpos: zPos)
+            gmcomp?.updatePool(c: pool)
+            pTurn = false
+            gmcomp?.act()
+            pool = gmcomp?.getPool()
+            gr?.update(playerDeck: playerDeck, pool: pool)
+            gmPlyr?.updatePool(c: pool)
         }
-        gmcomp?.updatePool(c: pool)
-        gmcomp?.act()
-        pool = gmcomp?.getPool()
-        gr?.update(playerDeck: playerDeck, pool: pool)
     }
-    
     func touchMoved(toPoint pos : CGPoint) {
         /*if let n = self.spinnyNode?.copy() as! SKShapeNode? {
             n.position = pos
