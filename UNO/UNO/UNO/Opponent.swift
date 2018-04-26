@@ -1,11 +1,11 @@
 import Foundation
 
-class Opponent : gmcomputer {
+class Opponent: gmcomputer {
     
     //should be ran within an if statement determining if their is a usable card
     //I reused the isUsable method in the method just to single out the usable cards
     func chooseRandomCard(regProb: Int, specProb: Int) {
-
+    
             //Does a quick check to see if you have multiple options
             if playableCards.count == 1 {
                 playCard(c: playableCards[0])
@@ -53,6 +53,10 @@ class Opponent : gmcomputer {
                 }
             }
         }
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
 }

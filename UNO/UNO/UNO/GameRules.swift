@@ -8,15 +8,25 @@
 
 import Foundation
 
-class GameRules : GameScene {
-
+class GameRules {
+    
+    var playerDeck: [Card] = []
+    var pool: Card?
+    var playableCards: [Card] = []
+    
+    init(playerDeck: [Card], pool: Card, playableCards: [Card]) {
+        self.playerDeck = playerDeck
+        self.pool = pool
+        self.playableCards = playableCards
+    }
+    
     func canPlay() {
-        let deck = iDeck
-        let previousCard = pool[0]
+        let deck = playerDeck
+        let previousCard = pool
     
         
         for cards in deck {
-            if cards.num == previousCard.num || cards.color == previousCard.color {
+            if cards.num == previousCard?.num || cards.color == previousCard?.color {
                 playableCards.append(cards)
             }
         }

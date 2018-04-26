@@ -10,11 +10,23 @@ import Foundation
 import GameKit
 import UIKit
 
-class gmcomputer: GameScene{
+class gmcomputer {
     
     let regularCardChance: Int = 75
     let specialCardChance: Int = 25
     var cTurn: Bool = false
+    
+    var computerDeck: [Card] = []
+    var pool: Card?
+    var frame: CGRect?
+    var playableCards: [Card] = []
+
+    init(pool: Card, computerDeck: [Card], playableCards: [Card], frame: CGRect) {
+        self.computerDeck = computerDeck
+        self.pool = pool
+        self.playableCards = playableCards
+        self.frame = frame
+    }
     
     func removFromHand(c: Card) {
         var index = 0
@@ -28,9 +40,8 @@ class gmcomputer: GameScene{
     
     func playCard(c: Card) {
         if (cTurn) {
-            pool.append(c)
+            pool = c
             c.position.x = CGFloat(-Int(c.frame.height)/2 + 8)
-
             c.position.y = 0
             removFromHand(c : c)
         }
@@ -39,17 +50,16 @@ class gmcomputer: GameScene{
     func draw() {
         if(cTurn) {
             //pop is a stack only function
-            let c = pool[pool.count - 1]
-            pool.removeLast()
+            let c = pool
             var posX: Int = Int(computerDeck[computerDeck.count-1].position.x)
             var posY: Int = Int(computerDeck[computerDeck.count-1].position.y)
-            if posX + 80 > Int(self.frame.width)/2 {
-                posX = -Int(self.frame.width)/2 + 80
+            if posX + 80 > Int((frame?.width)!)/2 {
+                posX = -Int((frame?.width)!)/2 + 80
                 posY += 100
             }
-            c.position.x = CGFloat(posX)
-            c.position.y = CGFloat(posY)
-            computerDeck.append(c)
+            c?.position.x = CGFloat(posX)
+            c?.position.y = CGFloat(posY)
+            computerDeck.append(c!)
         }
     }
     

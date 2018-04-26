@@ -1,72 +1,51 @@
-//
-//  GameScene.swift
-//  UNO
-//
-//  Created by Wall, Nicholas E on 4/5/18.
-//  Copyright © 2018 Wall, Nicholas E. All rights reserved.
-//
 
 import SpriteKit
 import GameplayKit
 
+
 class GameScene: SKScene {
-    
+    var pTurn : Bool = true
     private var label : SKLabelNode?
     private var spinnyNode : SKShapeNode?
     
-    //Filtered cards to be used with GameRules and Players
-    var playableCards: [Card] = []
     
+    var playableCards: [Card] = []
     
     //whos turn 1:player 2:cpu
     var currentTurn:Int = 1
+    
     //is game running
     var gameStarted:Bool = false
+    
     //determine who won
     var playerWin:Bool = false
     var computerWin:Bool = false
+    
     //player's cards
     var playerDeck:[Card] = []
+    
     //computer's cards
     var computerDeck:[Card] = []
-    //creates a LIFO structure
-    struct Stack {
-        //make the array properties part of stack, use.array for array functionality
-        fileprivate var array: [Card] = []
-        var count : Int = 0
-        //addcards to the last position of the array
-        mutating func push(_ element:Card)
-        {
-            array.append(element)
-            count+=1
-        }
-        //take the last card from the array removing it and returning it
-        mutating func pop() -> Card?
-        {
-            count-=1
-            return array.popLast()
-        }
-        //returns the last card in the array
-        func peek() -> Card? {
-            return array.last
-        }
-    }
-    //players play their card and place here
-    var pool : [Card] = []
-    //players draw cards from
-    var drawPile : [Card] = []
     
-
+    var gmPlyr :GameManagerPlayer?
+    
+    //creates a LIFO structure
+    //players play their card and place here
+    var pool : Card?
+    
+    //players draw cards from
+    var drawPile : Stack = Stack()
+    
     func shuffle( deck: [Card])-> [Card]{
         var i = deck.count-1
         var d = deck
         while(i >= 1){
-
+            
             let r = Int(arc4random()) % (i)
             let sv : Card = d[i]
             d[i] = d[r]
             d[r] = sv
-
+            
             i-=1
         }
         return d
@@ -89,13 +68,13 @@ class GameScene: SKScene {
             iDeck.append(Card(clr:.green,typ:.normal,num:i))
             i+=1
         }
-       iDeck = shuffle(deck : iDeck)
+        iDeck = shuffle(deck : iDeck)
         var x = -Int(self.frame.width)/2+80,y = Int(self.frame.height)/2-80
         for var c : Card in iDeck{
             c.position = CGPoint(x:0,y:0)
             addChild(c)
         }
-
+        
         for var c : Card in iDeck{
             iDecks.push(c)
         }
@@ -108,11 +87,15 @@ class GameScene: SKScene {
             x+=80
             i+=1
         }
+        print(iDecks.count)
         while(iDecks.count > 0){
-            drawPile.append(iDecks.pop()!)
+            drawPile.push(iDecks.pop()!)
         }
-       
-    
+        print(drawPile.count)
+        gmPlyr = GameManagerPlayer(playerDeck: playerDeck, pTurn: pTurn, pool: pool, drawPile: drawPile, frame: self.frame)
+        
+
+        
         //divide into intial groups of cards
         i = 1
         while i <= 10 {
@@ -120,18 +103,17 @@ class GameScene: SKScene {
             computerDraw()
             i += 1
         }
+        
     }
     //player takes a card from the draw pile
     func playerDraw()
     {
-        playerDeck.append(drawPile[drawPile.count-1])
-        drawPile.remove(at: drawPile.count-1)
+        playerDeck.append(drawPile.pop()!)
     }
     //computer takes a card from the draw pile
     func computerDraw()
     {
-        computerDeck.append(drawPile[drawPile.count-1])
-        drawPile.remove(at: drawPile.count-1)
+        computerDeck.append(drawPile.pop()!)
     }
     //checks to see if either the player or cpu has meet the parameters to win
     func checkDeckSize()
@@ -145,7 +127,7 @@ class GameScene: SKScene {
             computerWin = true
         }
     }
-   
+    
     
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
@@ -173,38 +155,60 @@ class GameScene: SKScene {
         // Get label node from scene and store it for use later
         //self.label = self.childNode(withName: "//helloLabel") as? SKLabelNode
         //if let label = self.label {
-         //   label.alpha = 0.0
-          //  label.run(SKAction.fadeIn(withDuration: 2.0))
-            //label.text = "\(playerDeck.count)"
-            
-            
+        //   label.alpha = 0.0
+        //  label.run(SKAction.fadeIn(withDuration: 2.0))
+        //label.text = "\(playerDeck.count)"
+        
+        
         
         
     }
     
-    
     func touchDown(atPoint pos : CGPoint) {
-        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-            n.position = pos
-            n.strokeColor = SKColor.green
-            self.addChild(n)
+        /*if let n = self.spinnyNode?.copy() as! SKShapeNode? {
+         n.position = pos
+         n.strokeColor = SKColor.green
+         self.addChild(n)
+         }*/
+        if(pTurn){
+            if(Int(pos.y) < -37){
+                for var c in playerDeck{
+                    if(abs(c.position.x-pos.x) <= 50 && abs(c.position.y-pos.y) <= 75){
+                        gmPlyr?.PlayCard(c: c)
+                        playerDeck = (gmPlyr?.getPDeck())!
+                        let r : Int = Int(arc4random()) % (drawPile.count-1)
+                        if let dup = pool{
+                            drawPile.insert(c: dup, indx: r)
+                        }
+                        pool?.removeFromParent()
+                        pool = c
+                        drawPile = (gmPlyr?.getDrawPile())!
+                    }
+                }
+            }else if(pos.y <= 37 && pos.y >= -37) && (pos.x <= 25 &&  pos.x >= -25){
+                gmPlyr?.draw()
+                playerDeck = (gmPlyr?.getPDeck())!
+                pool = gmPlyr?.getPool()
+                drawPile = (gmPlyr?.getDrawPile())!
+            }
         }
     }
     
     func touchMoved(toPoint pos : CGPoint) {
-        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-            n.position = pos
-            n.strokeColor = SKColor.blue
-            self.addChild(n)
-        }
+        /*if let n = self.spinnyNode?.copy() as! SKShapeNode? {
+         n.position = pos
+         n.strokeColor = SKColor.blue
+         self.addChild(n)
+         }*/
+        
     }
     
     func touchUp(atPoint pos : CGPoint) {
-        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-            n.position = pos
-            n.strokeColor = SKColor.red
-            self.addChild(n)
-        }
+        /*if let n = self.spinnyNode?.copy() as! SKShapeNode? {
+         n.position = pos
+         n.strokeColor = SKColor.red
+         self.addChild(n)
+         }*/
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -224,7 +228,7 @@ class GameScene: SKScene {
             if let card = atPoint(location) as? Card {
                 card.position = location
             }
-        
+            
         }
     }
     
@@ -234,5 +238,10 @@ class GameScene: SKScene {
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
         for t in touches { self.touchUp(atPoint: t.location(in: self)) }
-    } 
+    }
+    
+    
+    
+    
+    
 }
