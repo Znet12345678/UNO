@@ -11,15 +11,19 @@ import GameplayKit
 
 class TitleScene: SKScene {
 
-    var oneCPUButon:SKSpriteNode!
+    var oneCPUButton:SKSpriteNode!
     var twoCPUButton:SKSpriteNode!
     var threeCPUButton:SKSpriteNode!
     
     override func sceneDidLoad() {
         super.sceneDidLoad()
-        oneCPUButon = childNode(withName: "oneCPUButton") as! SKSpriteNode
-        twoCPUButton = childNode(withName: "twoCPUButton") as! SKSpriteNode
-        threeCPUButton = childNode(withName: "threeCPUButton") as! SKSpriteNode
+        for var sn : SKNode in self.children {
+            if sn.name == "oneCPUButton"{
+                print("Found")
+                oneCPUButton = sn as! SKSpriteNode
+            }
+        }
+        
     }
     
     func goToScene(scene: SKScene) {
@@ -39,7 +43,7 @@ class TitleScene: SKScene {
         let touchLocation = t.location(in: self)
         
         print(touchLocation)
-            if oneCPUButon.contains(touchLocation) {
+            if oneCPUButton.contains(touchLocation) {
                 print("1 opponent selected")
                 goToScene(scene:SKScene(fileNamed: "GameScene") as! GameScene)
             }
