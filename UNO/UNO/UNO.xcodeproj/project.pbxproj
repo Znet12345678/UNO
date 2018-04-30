@@ -20,6 +20,8 @@
 		3C54B75A209221F30080BD87 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3C54B759209221F30080BD87 /* GameScene.sks */; };
 		3C8460F020863AA80085C36F /* gmcomputer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C8460EF20863AA80085C36F /* gmcomputer.swift */; };
 		3C8460F420863D550085C36F /* GameRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C8460F320863D550085C36F /* GameRules.swift */; };
+		3CE5E6FA20922EEB006F5A99 /* GameOver.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3CE5E6F920922EEB006F5A99 /* GameOver.sks */; };
+		3CE5E6FC20922F13006F5A99 /* GameOver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CE5E6FB20922F13006F5A99 /* GameOver.swift */; };
 		3CF6D4712088DB01004C6EEA /* GameManagerPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CF6D4702088DB01004C6EEA /* GameManagerPlayer.swift */; };
 		3CF6D4732088DB81004C6EEA /* Stack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CF6D4722088DB81004C6EEA /* Stack.swift */; };
 /* End PBXBuildFile section */
@@ -40,6 +42,8 @@
 		3C54B759209221F30080BD87 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
 		3C8460EF20863AA80085C36F /* gmcomputer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = gmcomputer.swift; sourceTree = "<group>"; };
 		3C8460F320863D550085C36F /* GameRules.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameRules.swift; sourceTree = "<group>"; };
+		3CE5E6F920922EEB006F5A99 /* GameOver.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameOver.sks; sourceTree = "<group>"; };
+		3CE5E6FB20922F13006F5A99 /* GameOver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameOver.swift; sourceTree = "<group>"; };
 		3CF6D4702088DB01004C6EEA /* GameManagerPlayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameManagerPlayer.swift; sourceTree = "<group>"; };
 		3CF6D4722088DB81004C6EEA /* Stack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stack.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -75,10 +79,13 @@
 			isa = PBXGroup;
 			children = (
 				3C54B759209221F30080BD87 /* GameScene.sks */,
+				3C54B75720921FC90080BD87 /* TitleScene.sks */,
 				3C0A25C9208F8BC60083E59E /* TitleScene.swift */,
 				2ADE0BF320767D140093FB33 /* AppDelegate.swift */,
 				2ADE0BF720767D140093FB33 /* Actions.sks */,
 				2ADE0BF920767D140093FB33 /* GameScene.swift */,
+				3CE5E6F920922EEB006F5A99 /* GameOver.sks */,
+				3CE5E6FB20922F13006F5A99 /* GameOver.swift */,
 				3CF6D4722088DB81004C6EEA /* Stack.swift */,
 				3CF6D4702088DB01004C6EEA /* GameManagerPlayer.swift */,
 				3C8460EF20863AA80085C36F /* gmcomputer.swift */,
@@ -89,7 +96,6 @@
 				2ADE0C0020767D150093FB33 /* Assets.xcassets */,
 				2ADE0C0220767D150093FB33 /* LaunchScreen.storyboard */,
 				2ADE0C0520767D150093FB33 /* Info.plist */,
-				3C54B75720921FC90080BD87 /* TitleScene.sks */,
 			);
 			path = UNO;
 			sourceTree = "<group>";
@@ -154,6 +160,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2ADE0BFF20767D140093FB33 /* Main.storyboard in Resources */,
+				3CE5E6FA20922EEB006F5A99 /* GameOver.sks in Resources */,
 				2ADE0C0120767D150093FB33 /* Assets.xcassets in Resources */,
 				2ADE0C0420767D150093FB33 /* LaunchScreen.storyboard in Resources */,
 				2ADE0BF820767D140093FB33 /* Actions.sks in Resources */,
@@ -172,6 +179,7 @@
 				2ADE0BFA20767D140093FB33 /* GameScene.swift in Sources */,
 				3CF6D4732088DB81004C6EEA /* Stack.swift in Sources */,
 				2ADE0BFC20767D140093FB33 /* GameViewController.swift in Sources */,
+				3CE5E6FC20922F13006F5A99 /* GameOver.swift in Sources */,
 				3C8460F420863D550085C36F /* GameRules.swift in Sources */,
 				3CF6D4712088DB01004C6EEA /* GameManagerPlayer.swift in Sources */,
 				2ADE0BF420767D140093FB33 /* AppDelegate.swift in Sources */,

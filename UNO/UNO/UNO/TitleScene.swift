@@ -12,17 +12,17 @@ import GameplayKit
 class TitleScene: SKScene {
 
     var oneCPUButton: SKSpriteNode!
-    //var twoCPUButton: SKSpriteNode!
-    //var threeCPUButton: SKSpriteNode!
+    var twoCPUButton: SKSpriteNode!
+    var threeCPUButton: SKSpriteNode!
     
     override func sceneDidLoad() {
         super.sceneDidLoad()
-       // twoCPUButton = childNode(withName: "twoCPUButton") as? SKSpriteNode
-        //threeCPUButton = childNode(withName: "threeCPUButton") as? SKSpriteNode
         for var sn: SKNode in self.children {
             if sn.name == "oneCPUButton" {
                 print("Found")
                 oneCPUButton = sn as! SKSpriteNode
+                twoCPUButton = sn as! SKSpriteNode
+                threeCPUButton = sn as! SKSpriteNode
             }
         }
     }
@@ -40,26 +40,27 @@ class TitleScene: SKScene {
     // function isnt running
     func touchDown(atPoint pos : CGPoint) {
         print("touches ran")
-            if abs((oneCPUButton.position.x - pos.x)) <= oneCPUButton.size.width && abs((oneCPUButton.position.y - pos.y)) <= oneCPUButton.size.height {
-                    print("1 opponent selected")
-                    goToScene(scene:SKScene(fileNamed: "GameScene") as! GameScene)
-            }
-        /*
-        if (twoCPUButton.position.x - pos.x) <= 50 && (twoCPUButton.position.y - pos.y) <= 50 {
-                goToScene(scene: getNextScene()!)
-                print("2 opponents selected")
+        if abs((oneCPUButton.position.x - pos.x)) <= oneCPUButton.size.width && abs((oneCPUButton.position.y - pos.y)) <= oneCPUButton.size.height {
+            print("1 opponent selected")
+            goToScene(scene:SKScene(fileNamed: "GameScene") as! GameScene)
         }
-        if (threeCPUButton.position.x - pos.x) <= 50 && (threeCPUButton.position.y - pos.y) <= 50 {
-                goToScene(scene: getNextScene()!)
-                print("3 opponents selected")
+        if abs((twoCPUButton.position.x - pos.x)) <= twoCPUButton.size.width && abs((twoCPUButton.position.y - pos.y)) <= twoCPUButton.size.height {
+            print("2 opponent selected")
+            goToScene(scene:SKScene(fileNamed: "GameScene") as! GameScene)
         }
- */
+        if abs((twoCPUButton.position.x - pos.x)) <= twoCPUButton.size.width && abs((twoCPUButton.position.y - pos.y)) <= twoCPUButton.size.height {
+            print("3 opponent selected")
+            goToScene(scene:SKScene(fileNamed: "GameScene") as! GameScene)
+        }
+ 
     }
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         for t in touches {
             self.touchDown(atPoint: t.location(in: self))
         }
     }
+    
+    
     
 }
 

@@ -97,6 +97,7 @@ class gmcomputer{
             c.position.y = CGFloat(posY)
             c.isHidden = false
             computerDeck.append(c)
+            print("drew \(c)")
             gr.update(playerDeck: computerDeck, pool: pool)
             //    pTurn = false
         }

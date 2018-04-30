@@ -25,9 +25,7 @@ class GameScene: SKScene {
     var pool : Card?
     //players draw cards from
     var drawPile : Stack = Stack()
-    //NOTE THIS IS NOT GOING TO STAY
     
-    //all Cards initalized here (IK hard code is bad but i get nullPointer issues. If you figure a better way thats great)
     //red
     func shuffle( deck: [Card])-> [Card]{
         var i = deck.count-1
@@ -141,14 +139,39 @@ class GameScene: SKScene {
         }
     }
     
+    func goToScene(scene: SKScene) {
+        let sceneTransition = SKTransition.fade(with: .darkGray, duration: 0.5)
+        scene.scaleMode = .aspectFill
+        self.view?.presentScene(scene, transition: sceneTransition)
+    }
+    
     
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
+       
+        
+        
         if gameStarted == false
         {
             
             fillDecks()
             gameStarted = true
+        }
+        else
+        {
+            if playerDeck.count == 0
+            {
+                playerWin = true
+            }
+            if computerDeck.count == 0
+            {
+                computerWin = true
+            }
+            
+            if playerWin == true || computerWin == true
+            {
+                goToScene(scene:SKScene(fileNamed: "GameScene") as! GameScene)
+            }
         }
         //label?.text = "\(playerDeck.count)"
         checkDeckSize()
@@ -253,7 +276,7 @@ class GameScene: SKScene {
         for t in touches { self.touchDown(atPoint: t.location(in: self)) }
     }
     
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+   /* override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         for t in touches {
             //self.touchMoved(toPoint: t.location(in: self))
             
@@ -264,7 +287,7 @@ class GameScene: SKScene {
             }
             
         }
-    }
+    }*/
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         for t in touches { self.touchUp(atPoint: t.location(in: self)) }
