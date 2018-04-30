@@ -31,6 +31,7 @@ class GameManagerPlayer{
     }
     func updatePool(c : Card?){
         pool = c
+        
     }
     func changeTurn(){
         pTurn = !pTurn
@@ -57,6 +58,8 @@ class GameManagerPlayer{
             c.zPosition = CGFloat(nxtzPos)
             c.position.x = poolP.x
             c.position.y = poolP.y
+            print("P:\(c.zPosition)")
+            print("P:\(c.isHidden)")
             let neg = arc4random() % 2 == 0
             c.zRotation = CGFloat(Double(arc4random()).truncatingRemainder(dividingBy: Double.pi/6) * (neg ? -1 : 1))
             print(c.zRotation)

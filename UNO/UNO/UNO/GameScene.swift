@@ -17,6 +17,7 @@ class GameScene: SKScene {
     var gr : GameRules?
     var gmcomp :gmcomputer?
     var zPos : Int = 0
+    var left : Bool = true
     //whos turn 1:player 2:cpu
     var currentTurn:Int = 1
     //is game running
@@ -32,6 +33,7 @@ class GameScene: SKScene {
     //creates a LIFO structure
        //players play their card and place here
     var pool : Card?
+    var rot : Double = Double.pi/7
     //players draw cards from
     var drawPile : Stack = Stack()
     //NOTE THIS IS NOT GOING TO STAY
@@ -106,6 +108,8 @@ class GameScene: SKScene {
         while(i < 7){
             playerDeck.append(iDecks.pop()!)
             playerDeck[playerDeck.count-1].position = CGPoint(x:x,y:y)
+            playerDeck[playerDeck.count-1].zRotation = CGFloat(rot)
+            rot-=Double.pi/16
             computerDeck.append(iDecks.pop()!)
             computerDeck[computerDeck.count-1].isHidden = true
             x+=80
@@ -203,9 +207,10 @@ class GameScene: SKScene {
             if(Int(pos.y) < -37){
                 for var c in playerDeck{
                     if(abs(c.position.x-pos.x) <= 50 && abs(c.position.y-pos.y) <= 75){
+                        print("Trying to play card \(c)")
                         var canPlay : Bool = false
-                        gr?.update(playerDeck:playerDeck,pool:pool)
-                        print("\(playerDeck)____\(gr?.getPlayableCards())")
+                        gr = GameRules(playerDeck: playerDeck, pool: pool)
+                        print("\(playerDeck)<-playerDeck ____ playableCards-> \(gr?.getPlayableCards())")
                         for var pc in (gr?.getPlayableCards())!{
                             if pc.isEqual(c){
                                 canPlay = true
@@ -226,10 +231,10 @@ class GameScene: SKScene {
                             drawPile = (gmPlyr?.getDrawPile())!
                             zPos+=1
                             
+                        }else{
+                            return;
                         }
-                        for var pc in (gr?.getPlayableCards())!{
-                         //   pc.position.y-=25
-                        }
+                        
                     }
                 }
             }else if(pos.y <= 37 && pos.y >= -37) && (pos.x <= 25 &&  pos.x >= -25){
@@ -267,10 +272,6 @@ class GameScene: SKScene {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if let label = self.label {
-            label.run(SKAction.init(named: "Pulse")!, withKey: "fadeInOut")
-        }
-        
         for t in touches { self.touchDown(atPoint: t.location(in: self)) }
     }
     
@@ -279,10 +280,6 @@ class GameScene: SKScene {
             //self.touchMoved(toPoint: t.location(in: self))
             
             //Code to allow cards to be moved and rearranged by the player
-            let location = t.location(in: self)
-            if let card = atPoint(location) as? Card {
-                card.position = location
-            }
         
         }
     }

@@ -43,6 +43,7 @@ class gmcomputer{
     }
     func updatePool(c : Card?){
         self.pool = c
+        gr = GameRules(playerDeck: computerDeck, pool: pool)
     }
     func doneF()->Bool{
         return done
@@ -59,12 +60,13 @@ class gmcomputer{
     func act(){
         done = false
         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(2), execute: {
+            self.gr = GameRules(playerDeck:self.computerDeck,pool:self.pool)
             self.playableCards = (self.gr?.getPlayableCards())!
             if self.playableCards.count == 0{
                 print("Computer draws")
                 self.draw()
             }else{
-                print("Computer plays")
+                
                 self.chooseRandomCard(regProb: 10, specProb: 3)
             }
             self.done = true
@@ -80,21 +82,28 @@ class gmcomputer{
         var gr = GameRules(playerDeck:computerDeck,pool:pool)
         var pCards : [Card] = gr.getPlayableCards()
         var playable :Bool = false
+        if let p = pool{
+            print("COMP POOL\(p)")
+        }
         for var pc in pCards{
             if(pc.isEqual(c)){
                 playable = true
             }
         }
         if(playable){
+            print("Computer plays \(c)")
             c.zPosition = CGFloat(nxtzPos)
             c.position.x = poolP.x
             c.position.y = poolP.y
+            print("C:\(c.zPosition)")
+            print("C:\(c.isHidden)")
             let neg = arc4random() % 2 == 0
             c.zRotation = CGFloat(Double(arc4random()).truncatingRemainder(dividingBy: Double.pi/6) * (neg ? -1 : 1))
             print(c.zRotation)
+             pool = c
             removeFromHand(c:c)
         }
-        
+       
         gr.update(playerDeck: computerDeck, pool: pool)
         print("comp zPos:\(nxtzPos)")
     }
