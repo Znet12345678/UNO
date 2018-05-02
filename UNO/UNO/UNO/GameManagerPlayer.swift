@@ -8,6 +8,14 @@
 
 import Foundation
 import UIKit
+struct DrawStruct{
+    var pos : CGPoint
+    var c : Card
+    init(pos : CGPoint,c : Card){
+        self.pos = pos
+        self.c = c
+    }
+}
 class GameManagerPlayer{
     var playerDeck : [Card] = []
     var pTurn : Bool = true
@@ -56,8 +64,7 @@ class GameManagerPlayer{
         }
         if(pTurn && playable){
             c.zPosition = CGFloat(nxtzPos)
-            c.position.x = poolP.x
-            c.position.y = poolP.y
+           
             print("P:\(c.zPosition)")
             print("P:\(c.isHidden)")
             let neg = arc4random() % 2 == 0
@@ -69,7 +76,7 @@ class GameManagerPlayer{
        
         print("Player zPos: \(nxtzPos)")
     }
-    func draw(){
+    func draw()->DrawStruct?{
         var gr = GameRules(playerDeck:playerDeck,pool:pool)
         var pCards : [Card] = gr.getPlayableCards()
         var playable :Bool = false
@@ -81,12 +88,16 @@ class GameManagerPlayer{
                 posX = Int(pStart.x);
                 posY+=100
             }
-            c.position.x = CGFloat(posX+80)
-            c.position.y = CGFloat(posY)
+           
+            
             c.isHidden = false
             playerDeck.append(c)
+            let ret =  DrawStruct(pos:CGPoint(x:posX+80,y:posY),c:c)
+           
+            return ret
         //    pTurn = false
         }
+        return nil
     }
     func getPDeck()->[Card]{
         return playerDeck

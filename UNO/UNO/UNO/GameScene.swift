@@ -15,8 +15,12 @@ class GameScene: SKScene {
     private var label : SKLabelNode?
     private var spinnyNode : SKShapeNode?
     var gr : GameRules?
+    var poolMov : Card?
+    var handMov : Card?
+    var handMovPos : CGPoint?
     var gmcomp :gmcomputer?
     var zPos : Int = 0
+    var canTouch : Bool = true
     var left : Bool = true
     //whos turn 1:player 2:cpu
     var currentTurn:Int = 1
@@ -34,10 +38,10 @@ class GameScene: SKScene {
        //players play their card and place here
     var pool : Card?
     var rot : Double = Double.pi/7
+    var tsB = true
     //players draw cards from
     var drawPile : Stack = Stack()
     //NOTE THIS IS NOT GOING TO STAY
-    
     //all Cards initalized here (IK hard code is bad but i get nullPointer issues. If you figure a better way thats great)
         //red
             func shuffle( deck: [Card])-> [Card]{
@@ -54,6 +58,10 @@ class GameScene: SKScene {
         }
         return d
     }
+    
+    
+    
+ 
     var iDeck : [Card] = []
     var iDecks  = Stack()
     var pStart :SKSpriteNode?,cStart : SKSpriteNode?, pEnd :SKSpriteNode?,cEnd:SKSpriteNode?,poolStart : SKSpriteNode?
@@ -160,8 +168,33 @@ class GameScene: SKScene {
         if gameStarted == false
         {
             
+            
+            if tsB{
+                tsB = false
+                self.view?.presentScene(SKScene(fileNamed:"TitleScene"))
+                return
+            }
+
             fillDecks()
             gameStarted = true
+        }
+        if let hc = handMov{
+            hc.position = CGPoint(x:abs(hc.position.x - (handMovPos?.x)!) > 5 ? hc.position.x + (hc.position.x >= (handMovPos?.y)! ? -5 : 5) : hc.position.x,y:abs(hc.position.y - (handMovPos?.y)!) <= 5 ? CGFloat(hc.position.y) : hc.position.y + (hc.position.y >= (handMovPos?.y)! ? -5 : 5))
+            if abs(hc.position.x - (handMovPos?.x)!) <= 5 && abs(hc.position.y - (handMovPos?.y)!) <= 5{
+                handMov = nil
+                handMovPos = nil
+                gmcomp?.act()
+            }
+        }
+        if let c = poolMov{
+            
+            c.position = CGPoint(x:(abs(c.position.x - (poolStart?.position.x)!) > 5) ? c.position.x + ((c.position.x >= (poolStart?.position.x)! ? -5 : 5)) : c.position.x,y:abs(c.position.y - (poolStart?.position.y)!) <= 5 ? c.position.y : c.position.y + (c.position.y >= (poolStart?.position.y)! ? -5 : 5))
+            print("c \(c.position) poolStart \(poolStart?.position)")
+            if abs(c.position.x - (poolStart?.position.x)!) <= 5 && abs(c.position.y - (poolStart?.position.y)!) <= 5 {
+                poolMov = nil
+              print("End")
+                gmcomp?.act()
+            }
         }
         //label?.text = "\(playerDeck.count)"
         checkDeckSize()
@@ -226,8 +259,9 @@ class GameScene: SKScene {
                                 drawPile.insert(c: dup, indx: r)
                             }
                        //     pool?.isHidden = true
+                           
                             pool = c
-                    
+                            poolMov = pool
                             drawPile = (gmPlyr?.getDrawPile())!
                             zPos+=1
                             
@@ -238,17 +272,22 @@ class GameScene: SKScene {
                     }
                 }
             }else if(pos.y <= 37 && pos.y >= -37) && (pos.x <= 25 &&  pos.x >= -25){
-                gmPlyr?.draw()
+                let drawS :DrawStruct? = gmPlyr?.draw()
                 playerDeck = (gmPlyr?.getPDeck())!
                 pool = gmPlyr?.getPool()
                 drawPile = (gmPlyr?.getDrawPile())!
+                if let ds = drawS{
+        
+                    handMov = ds.c
+                    handMovPos = ds.pos
+                }
 
             }
         
             gmcomp?.updatezPos(zpos: zPos)
             gmcomp?.updatePool(c: pool)
             pTurn = false
-            gmcomp?.act()
+            
             pool = gmcomp?.getPool()
             gr?.update(playerDeck: playerDeck, pool: pool)
             gmPlyr?.updatePool(c: pool)
@@ -272,7 +311,9 @@ class GameScene: SKScene {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for t in touches { self.touchDown(atPoint: t.location(in: self)) }
+        if canTouch{
+            for t in touches { self.touchDown(atPoint: t.location(in: self)) }
+        }
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
