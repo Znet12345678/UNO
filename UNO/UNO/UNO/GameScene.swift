@@ -14,11 +14,13 @@ class GameScene: SKScene {
     var pTurn : Bool = true
     private var label : SKLabelNode?
     private var spinnyNode : SKShapeNode?
+    var cpus : Int?
     var gr : GameRules?
     var poolMov : Card?
     var handMov : Card?
+    var moveFinished : Bool = true
     var handMovPos : CGPoint?
-    var gmcomp :gmcomputer?
+    var gmcomp :[gmcomputer] = []
     var zPos : Int = 0
     var canTouch : Bool = true
     var left : Bool = true
@@ -32,13 +34,13 @@ class GameScene: SKScene {
     //player's cards
     var playerDeck:[Card] = []
     //computer's cards
-    var computerDeck:[Card] = []
+    var computerDeck:[[Card]] = []
     var gmPlyr :GameManagerPlayer?
     //creates a LIFO structure
        //players play their card and place here
     var pool : Card?
     var rot : Double = Double.pi/7
-    var tsB = true
+    var tsB : Bool = true
     //players draw cards from
     var drawPile : Stack = Stack()
     //NOTE THIS IS NOT GOING TO STAY
@@ -69,6 +71,7 @@ class GameScene: SKScene {
     //takes all cards and assigns a location for them
     func fillDecks()
     {
+        print(cpus)
         //drawPile.push(CARD) adds the card to the stack
         //CARD.position gives a location for the touchesMoved method to use for testing the drawing and rearranging of cards logic
         //addChild(CARD) activates the node to be used by the game handler
@@ -93,7 +96,7 @@ class GameScene: SKScene {
                 poolStart = child as? SKSpriteNode
             }
         }
-        //NOTE @CARDS(BLUE & YELLOW STILL NEED TEMPORARY POSITIONS)
+        
         var i = 0
         while(i < 11){
             iDeck.append(Card(clr:.red,typ:.normal,num:i))
@@ -113,41 +116,56 @@ class GameScene: SKScene {
             iDecks.push(c)
         }
         i = 0
+        for j in 0 ... cpus!{
+            computerDeck.append([])
+        }
         while(i < 7){
             playerDeck.append(iDecks.pop()!)
             playerDeck[playerDeck.count-1].position = CGPoint(x:x,y:y)
             playerDeck[playerDeck.count-1].zRotation = CGFloat(rot)
             rot-=Double.pi/16
-            computerDeck.append(iDecks.pop()!)
-            computerDeck[computerDeck.count-1].isHidden = true
+            for j in 0 ... cpus!{
+                computerDeck[j].append(iDecks.pop()!)
+                computerDeck[j][computerDeck[j].count-1].isHidden = true
+            }
             x+=80
             i+=1
         }
         while(iDecks.count > 0){
             drawPile.push(iDecks.pop()!)
         }
-        gmcomp = gmcomputer(pool: pool, computerDeck: computerDeck, cBegin:(cStart?.position)!,cEnd:(cEnd?.position)!,poolP: (poolStart?.position)!,drawPile:drawPile)
+        for i in 0 ... cpus!{
+           
+                gmcomp.append(gmcomputer(pool: pool, computerDeck: computerDeck[i], cBegin:(cStart?.position)!,cEnd:(cEnd?.position)!,poolP: (poolStart?.position)!,drawPile:drawPile))
+            
+        }
         gmPlyr = GameManagerPlayer(playerDeck: playerDeck, pTurn: pTurn, pool: pool, drawPile: drawPile, pStart:(pStart?.position)!, pEnd: (pEnd?.position)!,poolP:(poolStart?.position)!)
         
     
         //divide into intial groups of cards
-        i = 1
+        /*i = 1
         while i <= 10 {
             playerDraw()
-            computerDraw()
+            var k = 0
+            while(k < cpus){
+                computerDraw(cpu:k)
+                k+=1
+            }
             i += 1
-        }
+        }*/
         gr = GameRules(playerDeck: playerDeck, pool: pool)
     }
     //player takes a card from the draw pile
     func playerDraw()
     {
+        print(drawPile.count)
         playerDeck.append(drawPile.pop()!)
     }
     //computer takes a card from the draw pile
-    func computerDraw()
+    func computerDraw(cpu : Int)
     {
-        computerDeck.append(drawPile.pop()!)
+        print(drawPile.count)
+        computerDeck[cpu].append(drawPile.pop()!)
     }
     //checks to see if either the player or cpu has meet the parameters to win
     func checkDeckSize()
@@ -162,7 +180,6 @@ class GameScene: SKScene {
         }
     }
    
-    
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
         if gameStarted == false
@@ -178,22 +195,42 @@ class GameScene: SKScene {
             fillDecks()
             gameStarted = true
         }
+        
         if let hc = handMov{
-            hc.position = CGPoint(x:abs(hc.position.x - (handMovPos?.x)!) > 5 ? hc.position.x + (hc.position.x >= (handMovPos?.y)! ? -5 : 5) : hc.position.x,y:abs(hc.position.y - (handMovPos?.y)!) <= 5 ? CGFloat(hc.position.y) : hc.position.y + (hc.position.y >= (handMovPos?.y)! ? -5 : 5))
+            
+            hc.position = CGPoint(x:abs(hc.position.x - (handMovPos?.x)!) > 5 ? hc.position.x + (hc.position.x >= (handMovPos?.x)! ? -5 : 5) : hc.position.x,y:abs(hc.position.y - (handMovPos?.y)!) <= 5 ? CGFloat(hc.position.y) : hc.position.y + (hc.position.y >= (handMovPos?.y)! ? -5 : 5))
             if abs(hc.position.x - (handMovPos?.x)!) <= 5 && abs(hc.position.y - (handMovPos?.y)!) <= 5{
                 handMov = nil
                 handMovPos = nil
-                gmcomp?.act()
+                for i in 0 ... cpus!{
+                    
+                        gmcomp[i].updatezPos(zpos:zPos)
+                        gmcomp[i].updatePool(c: pool)
+                        gmcomp[i].act()
+                        print("Act")
+                        pool = gmcomp[i].getPool()
+                        sleep(1)
+                    zPos+=1
+                }
             }
         }
         if let c = poolMov{
             
             c.position = CGPoint(x:(abs(c.position.x - (poolStart?.position.x)!) > 5) ? c.position.x + ((c.position.x >= (poolStart?.position.x)! ? -5 : 5)) : c.position.x,y:abs(c.position.y - (poolStart?.position.y)!) <= 5 ? c.position.y : c.position.y + (c.position.y >= (poolStart?.position.y)! ? -5 : 5))
-            print("c \(c.position) poolStart \(poolStart?.position)")
+    
             if abs(c.position.x - (poolStart?.position.x)!) <= 5 && abs(c.position.y - (poolStart?.position.y)!) <= 5 {
                 poolMov = nil
-              print("End")
-                gmcomp?.act()
+                for i in 0 ... cpus!{
+                    gmcomp[i].updatezPos(zpos: zPos)
+                    gmcomp[i].updatePool(c:pool)
+                    gmcomp[i].act()
+                    
+                    print("Act")
+                 
+                    pool = gmcomp[i].getPool()
+                    sleep(1)
+                    zPos+=1
+                }
             }
         }
         //label?.text = "\(playerDeck.count)"
@@ -229,14 +266,27 @@ class GameScene: SKScene {
             n.strokeColor = SKColor.green
             self.addChild(n)
         }*/
-        pTurn = (gmcomp?.doneF())!
+        pTurn = false
+        while(!pTurn){
+            for i in 0 ... cpus!{
+        
+                    pTurn = gmcomp[i].doneF()
+                if pTurn{
+                    break
+                }
+            }
+        }
         print("Pool zPos: \(pool?.zPosition)")
         if(pTurn){
             zPos+=1
-            pool = gmcomp?.getPool()
+           
+            pool = gmcomp[gmcomp.count-1].getPool()
+        
             gmPlyr?.updatePool(c: pool)
             gmPlyr?.updatezPos(zpos: zPos)
-            gmcomp?.updatezPos(zpos: zPos)
+            for i in 0 ... cpus!{
+                gmcomp[i].updatezPos(zpos: zPos)
+            }
             if(Int(pos.y) < -37){
                 for var c in playerDeck{
                     if(abs(c.position.x-pos.x) <= 50 && abs(c.position.y-pos.y) <= 75){
@@ -251,7 +301,7 @@ class GameScene: SKScene {
                         }
                         if canPlay{
                             gmPlyr?.PlayCard(c: c)
-
+                            moveFinished = false
                             playerDeck = (gmPlyr?.getPDeck())!
                             let r : Int = drawPile.count <= 1 ? 0 : Int(arc4random())%(drawPile.count-1)
                             if let dup = pool{
@@ -283,12 +333,13 @@ class GameScene: SKScene {
                 }
 
             }
-        
+            /*
             gmcomp?.updatezPos(zpos: zPos)
-            gmcomp?.updatePool(c: pool)
+            gmcomp?.updatePool(c: pool)*/
             pTurn = false
-            
+            /*
             pool = gmcomp?.getPool()
+             */
             gr?.update(playerDeck: playerDeck, pool: pool)
             gmPlyr?.updatePool(c: pool)
         }

@@ -13,14 +13,14 @@ class GameRules {
     var playableCards : [Card] = []
     var pool : Card?
     init(playerDeck : [Card],pool : Card?){
-        print("PASSED POOL:\(pool)")
+       
         self.playerDeck = playerDeck
         self.pool = pool
         playableCards = []
         canPlay()
     }
     func update(playerDeck : [Card],pool : Card?){
-        print("PASSED POOL:\(pool)")
+    
         playableCards = []
         self.playerDeck = playerDeck
         self.pool = pool
@@ -31,7 +31,7 @@ class GameRules {
         
         
         if let previousCard = pool{
-            print("GRPOOL:\(previousCard)")
+       
             for cards in playerDeck {
                 if cards.num == previousCard.num || cards.clr == previousCard.clr {
                     playableCards.append(cards)

@@ -82,9 +82,7 @@ class gmcomputer{
         var gr = GameRules(playerDeck:computerDeck,pool:pool)
         var pCards : [Card] = gr.getPlayableCards()
         var playable :Bool = false
-        if let p = pool{
-            print("COMP POOL\(p)")
-        }
+     
         for var pc in pCards{
             if(pc.isEqual(c)){
                 playable = true
@@ -103,7 +101,7 @@ class gmcomputer{
              pool = c
             removeFromHand(c:c)
         }
-       
+        print("Computer card\(c)")
         gr.update(playerDeck: computerDeck, pool: pool)
         print("comp zPos:\(nxtzPos)")
     }
