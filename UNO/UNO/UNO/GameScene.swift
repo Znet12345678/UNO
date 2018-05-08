@@ -33,6 +33,8 @@ class GameScene: SKScene {
     var pool : Card?
     var rot : Double = Double.pi/7
     var tsB : Bool = true
+    let initxDistance: Int = 80
+    var separation: Int = 80
     //players draw cards from
     var drawPile : Stack = Stack()
     //NOTE THIS IS NOT GOING TO STAY
@@ -72,16 +74,16 @@ class GameScene: SKScene {
             if child.name == "Deck"{
                 deck = child as? SKSpriteNode
             }
-            if child.name == "StartXPlayer"{
+            if child.name == "Player 1"{
                 pStart = child as? SKSpriteNode
             }
-            if child.name == "StartXComp"{
+            if child.name == "Player 2"{
                 cStart = child as? SKSpriteNode
             }
-            if child.name == "EndXPlayer"{
+            if child.name == "Player 3"{
                 pEnd = child as? SKSpriteNode
             }
-            if child.name == "EndXComp"{
+            if child.name == "Player 4"{
                 cEnd = child as? SKSpriteNode
             }
             if child.name == "PoolPile"{
@@ -99,7 +101,8 @@ class GameScene: SKScene {
         }
         
         iDeck = shuffle(deck:iDeck)
-        var x = Int((pStart?.position.x)!),y = Int((pStart?.position.y)!)
+        var x = Int((pStart?.position.x)!)
+        var y = Int((pStart?.position.y)!)
         for var c : Card in iDeck{
             c.position = CGPoint(x:(deck?.position.x)!,y:(deck?.position.y)!)
             addChild(c)
@@ -114,13 +117,16 @@ class GameScene: SKScene {
         while(i < 7){
             playerDeck.append(iDecks.pop()!)
             playerDeck[playerDeck.count-1].position = CGPoint(x:x,y:y)
-            playerDeck[playerDeck.count-1].zRotation = CGFloat(rot)
-            rot-=Double.pi/16
             for j in 0 ... cpus!{
                 computerDeck[j].append(iDecks.pop()!)
                 computerDeck[j][computerDeck[j].count-1].isHidden = true
             }
-            x+=80
+            if x <= 295 {
+                x += initxDistance
+            } else {
+                x = Int((pStart?.position.x)!)
+                y += 25
+            }
             i+=1
         }
         while(iDecks.count > 0){
@@ -128,7 +134,7 @@ class GameScene: SKScene {
         }
         for i in 0 ... cpus!{
             
-            gmcomp.append(gmcomputer(pool: pool, computerDeck: computerDeck[i], cBegin:(cStart?.position)!,cEnd:(cEnd?.position)!,poolP: (poolStart?.position)!,drawPile:drawPile))
+            gmcomp.append(gmcomputer(pool: pool, computerDeck: computerDeck[i], cBegin: (cStart?.position)!, cEnd: (cEnd?.position)! , poolP: (poolStart?.position)!, drawPile: drawPile))
             
         }
         gmPlyr = GameManagerPlayer(playerDeck: playerDeck, pTurn: pTurn, pool: pool, drawPile: drawPile, pStart:(pStart?.position)!, pEnd: (pEnd?.position)!,poolP:(poolStart?.position)!)
@@ -310,6 +316,14 @@ class GameScene: SKScene {
                             drawPile = (gmPlyr?.getDrawPile())!
                             zPos+=1
                             
+                            
+                            for var i in playerDeck {
+                                if i.position.x < c.position.x {
+                                    i.position.x += CGFloat(40)
+                                } else {
+                                    i.position.x -= CGFloat(40)
+                                }
+                            }
                         }else{
                             return;
                         }

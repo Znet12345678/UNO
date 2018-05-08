@@ -36,7 +36,6 @@ class TitleScene: SKScene {
         
     }
     
-    // function isnt running
     func touchDown(atPoint pos : CGPoint) {
         print("touches ran")
         if abs((oneCPUButton.position.x - pos.x)) <= oneCPUButton.size.width && abs((oneCPUButton.position.y - pos.y)) <= oneCPUButton.size.height {
