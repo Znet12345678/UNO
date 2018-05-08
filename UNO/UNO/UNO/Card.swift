@@ -19,6 +19,7 @@ import SpriteKit
         case green
         case yellow
         case blue
+        case none
     }
 
     class Card : SKSpriteNode {
@@ -44,9 +45,14 @@ import SpriteKit
                 color = "green"
             case .blue:
                 color = "blue"
+            case .none:
+                color = ""
             }
-            frontTexture = SKTexture(imageNamed: "unocard_\(color)_\(num)")
-                        
+            if(typ == .normal){
+                frontTexture = SKTexture(imageNamed: "unocard_\(color)_\(num)")
+            }else{
+                frontTexture = SKTexture(imageNamed:"unocard_\(num)")
+            }
             super.init(texture: frontTexture, color: .clear,size: frontTexture.size())
             
         }

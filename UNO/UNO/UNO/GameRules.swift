@@ -12,6 +12,7 @@ class GameRules {
     var playerDeck : [Card] = []
     var playableCards : [Card] = []
     var pool : Card?
+    var nextSkipped : Bool = false
     init(playerDeck : [Card],pool : Card?){
        
         self.playerDeck = playerDeck
@@ -25,6 +26,61 @@ class GameRules {
         self.playerDeck = playerDeck
         self.pool = pool
         canPlay()
+        
+    }
+    func rules(previousCard: Card?, cards: Card) {
+        if let pc = previousCard{
+            if cards.num == pc.num || cards.clr == pc.clr {
+                if cards.num == 10 {
+                    nextSkipped = true
+                }
+                if cards.num == 11 {
+                    //reverse
+                }
+                if cards.num == 12 {
+                    //draw function that only makes player draw if they do not use a +2
+                }
+                if cards.typ == .plus4 {
+                    //changeColor()
+                    //draw(4)
+                }
+                if cards.typ == .swap {
+                    //changeColor()
+                }
+            } else {
+            
+                if cards.typ == .plus4 {
+                    //changeColor()
+                    //draw(4)
+                    
+                }
+                
+                if cards.typ == .swap {
+                    //changeColor()
+                }
+                
+            }
+        }else{
+            if cards.num == 10 {
+                nextSkipped = true
+            }
+            if cards.num == 11 {
+                //reverse
+            }
+            if cards.num == 12 {
+                //draw function that only makes player draw if they do not use a +2
+            }
+            if cards.typ == .plus4 {
+                //changeColor()
+                //draw(4)
+            }
+            if cards.typ == .swap {
+                //changeColor()
+            }
+        }
+    }
+    func getNextSkipped()->Bool{
+        return nextSkipped
         
     }
     func canPlay() {

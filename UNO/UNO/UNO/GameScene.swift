@@ -24,6 +24,7 @@ class GameScene: SKScene {
     var zPos : Int = 0
     var canTouch : Bool = true
     var left : Bool = true
+    var compCanPlay : Bool = false
     //whos turn 1:player 2:cpu
     var currentTurn:Int = 1
     //is game running
@@ -105,7 +106,24 @@ class GameScene: SKScene {
             iDeck.append(Card(clr:.green,typ:.normal,num:i))
             i+=1
         }
-
+        let clrarr = [color.red,color.green,color.blue,color.yellow]
+        while(i < 13){
+            for var clr : color in clrarr{
+                iDeck.append(Card(clr:clr,typ:.normal,num:i))
+            }
+            i+=1
+        }
+        var a = 0
+        while(a < 2){
+            iDeck.append(Card(clr:color.none,typ:.swap,num:i))
+            a+=1
+        }
+        i+=1
+        a = 0
+        while(a < 2){
+            iDeck.append(Card(clr:color.none,typ:.plus4,num:i))
+            a+=1
+        }
         iDeck = shuffle(deck:iDeck)
         var x = Int((pStart?.position.x)!),y = Int((pStart?.position.y)!)
         for var c : Card in iDeck{
@@ -202,15 +220,31 @@ class GameScene: SKScene {
             if abs(hc.position.x - (handMovPos?.x)!) <= 5 && abs(hc.position.y - (handMovPos?.y)!) <= 5{
                 handMov = nil
                 handMovPos = nil
-                for i in 0 ... cpus!{
-                    
-                        gmcomp[i].updatezPos(zpos:zPos)
-                        gmcomp[i].updatePool(c: pool)
-                        gmcomp[i].act()
-                        print("Act")
-                        pool = gmcomp[i].getPool()
-                        sleep(1)
-                    zPos+=1
+                var canPlay = true
+                while(canPlay){
+                    canPlay = false
+                    for i in 0 ... cpus!{
+                        if compCanPlay{
+                            gmcomp[i].updatezPos(zpos:zPos)
+                            gmcomp[i].updatePool(c: pool)
+                            var b = gmcomp[i].act()
+                            print("Act")
+                            var c = gmcomp[i].getPool()!
+                            if(b){
+                                gr?.rules(previousCard: pool, cards: c)
+                                compCanPlay = !(gr?.getNextSkipped())!
+                                if(!compCanPlay && i == cpus!){
+                                    compCanPlay = true
+                                    canPlay = true
+                                }
+                            }
+                            pool = c
+                            sleep(1)
+                            zPos+=1
+                        }else{
+                            compCanPlay = true
+                        }
+                    }
                 }
             }
         }
@@ -301,6 +335,8 @@ class GameScene: SKScene {
                         }
                         if canPlay{
                             gmPlyr?.PlayCard(c: c)
+                            gr?.rules(previousCard: pool, cards: c)
+                            compCanPlay = !(gr?.getNextSkipped())!
                             moveFinished = false
                             playerDeck = (gmPlyr?.getPDeck())!
                             let r : Int = drawPile.count <= 1 ? 0 : Int(arc4random())%(drawPile.count-1)
