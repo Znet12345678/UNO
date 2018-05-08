@@ -6,8 +6,16 @@ class GameScene: SKScene {
     var pTurn : Bool = true
     private var label : SKLabelNode?
     private var spinnyNode : SKShapeNode?
+    var cpus : Int?
     var gr : GameRules?
-    var gmcomp :gmcomputer?
+    var poolMov : Card?
+    var handMov : Card?
+    var moveFinished : Bool = true
+    var handMovPos : CGPoint?
+    var gmcomp :[gmcomputer] = []
+    var zPos : Int = 0
+    var canTouch : Bool = true
+    var left : Bool = true
     //whos turn 1:player 2:cpu
     var currentTurn:Int = 1
     //is game running
@@ -18,14 +26,17 @@ class GameScene: SKScene {
     //player's cards
     var playerDeck:[Card] = []
     //computer's cards
-    var computerDeck:[Card] = []
+    var computerDeck:[[Card]] = []
     var gmPlyr :GameManagerPlayer?
     //creates a LIFO structure
     //players play their card and place here
     var pool : Card?
+    var rot : Double = Double.pi/7
+    var tsB : Bool = true
     //players draw cards from
     var drawPile : Stack = Stack()
-    
+    //NOTE THIS IS NOT GOING TO STAY
+    //all Cards initalized here (IK hard code is bad but i get nullPointer issues. If you figure a better way thats great)
     //red
     func shuffle( deck: [Card])-> [Card]{
         var i = deck.count-1
@@ -41,6 +52,10 @@ class GameScene: SKScene {
         }
         return d
     }
+    
+    
+    
+    
     var iDeck : [Card] = []
     var iDecks  = Stack()
     var pStart :SKSpriteNode?,cStart : SKSpriteNode?, pEnd :SKSpriteNode?,cEnd:SKSpriteNode?,poolStart : SKSpriteNode?
@@ -48,6 +63,7 @@ class GameScene: SKScene {
     //takes all cards and assigns a location for them
     func fillDecks()
     {
+        print(cpus)
         //drawPile.push(CARD) adds the card to the stack
         //CARD.position gives a location for the touchesMoved method to use for testing the drawing and rearranging of cards logic
         //addChild(CARD) activates the node to be used by the game handler
@@ -72,7 +88,7 @@ class GameScene: SKScene {
                 poolStart = child as? SKSpriteNode
             }
         }
-        //NOTE @CARDS(BLUE & YELLOW STILL NEED TEMPORARY POSITIONS)
+        
         var i = 0
         while(i < 11){
             iDeck.append(Card(clr:.red,typ:.normal,num:i))
@@ -92,39 +108,56 @@ class GameScene: SKScene {
             iDecks.push(c)
         }
         i = 0
+        for j in 0 ... cpus!{
+            computerDeck.append([])
+        }
         while(i < 7){
             playerDeck.append(iDecks.pop()!)
             playerDeck[playerDeck.count-1].position = CGPoint(x:x,y:y)
-            computerDeck.append(iDecks.pop()!)
-            computerDeck[computerDeck.count-1].isHidden = true
+            playerDeck[playerDeck.count-1].zRotation = CGFloat(rot)
+            rot-=Double.pi/16
+            for j in 0 ... cpus!{
+                computerDeck[j].append(iDecks.pop()!)
+                computerDeck[j][computerDeck[j].count-1].isHidden = true
+            }
             x+=80
             i+=1
         }
         while(iDecks.count > 0){
             drawPile.push(iDecks.pop()!)
         }
-        gmcomp = gmcomputer(pool: pool, computerDeck: computerDeck, cBegin:(cStart?.position)!,cEnd:(cEnd?.position)!,poolP: (poolStart?.position)!,drawPile:drawPile)
+        for i in 0 ... cpus!{
+            
+            gmcomp.append(gmcomputer(pool: pool, computerDeck: computerDeck[i], cBegin:(cStart?.position)!,cEnd:(cEnd?.position)!,poolP: (poolStart?.position)!,drawPile:drawPile))
+            
+        }
         gmPlyr = GameManagerPlayer(playerDeck: playerDeck, pTurn: pTurn, pool: pool, drawPile: drawPile, pStart:(pStart?.position)!, pEnd: (pEnd?.position)!,poolP:(poolStart?.position)!)
         
         
         //divide into intial groups of cards
-        i = 1
-        while i <= 10 {
-            playerDraw()
-            computerDraw()
-            i += 1
-        }
+        /*i = 1
+         while i <= 10 {
+         playerDraw()
+         var k = 0
+         while(k < cpus){
+         computerDraw(cpu:k)
+         k+=1
+         }
+         i += 1
+         }*/
         gr = GameRules(playerDeck: playerDeck, pool: pool)
     }
     //player takes a card from the draw pile
     func playerDraw()
     {
+        print(drawPile.count)
         playerDeck.append(drawPile.pop()!)
     }
     //computer takes a card from the draw pile
-    func computerDraw()
+    func computerDraw(cpu : Int)
     {
-        computerDeck.append(drawPile.pop()!)
+        print(drawPile.count)
+        computerDeck[cpu].append(drawPile.pop()!)
     }
     //checks to see if either the player or cpu has meet the parameters to win
     func checkDeckSize()
@@ -139,38 +172,60 @@ class GameScene: SKScene {
         }
     }
     
-    func goToScene(scene: SKScene) {
-        let sceneTransition = SKTransition.fade(with: .darkGray, duration: 0.5)
-        scene.scaleMode = .aspectFill
-        self.view?.presentScene(scene, transition: sceneTransition)
-    }
-    
-    
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
-       
-        
-        
         if gameStarted == false
         {
+            
+            
+            if tsB{
+                tsB = false
+                self.view?.presentScene(SKScene(fileNamed:"TitleScene"))
+                return
+            }
             
             fillDecks()
             gameStarted = true
         }
-        else
+       /* if pTurn == true
         {
-            if playerDeck.count == 0
-            {
-                playerWin = true
-            }
-            if computerDeck.count == 0
-            {
-                computerWin = true
-            }
+            print("It is now the player's turn")
+        } */
+        if let hc = handMov{
             
-            if playerWin == true || computerWin == true
-            {
-                goToScene(scene:SKScene(fileNamed: "GameScene") as! GameScene)
+            hc.position = CGPoint(x:abs(hc.position.x - (handMovPos?.x)!) > 5 ? hc.position.x + (hc.position.x >= (handMovPos?.x)! ? -5 : 5) : hc.position.x,y:abs(hc.position.y - (handMovPos?.y)!) <= 5 ? CGFloat(hc.position.y) : hc.position.y + (hc.position.y >= (handMovPos?.y)! ? -5 : 5))
+            if abs(hc.position.x - (handMovPos?.x)!) <= 5 && abs(hc.position.y - (handMovPos?.y)!) <= 5{
+                handMov = nil
+                handMovPos = nil
+                for i in 0 ... cpus!{
+                    
+                    gmcomp[i].updatezPos(zpos:zPos)
+                    gmcomp[i].updatePool(c: pool)
+                    gmcomp[i].act()
+                    print("Act")
+                    pool = gmcomp[i].getPool()
+                    sleep(1)
+                    zPos+=1
+                }
+            }
+        }
+        if let c = poolMov{
+            
+            c.position = CGPoint(x:(abs(c.position.x - (poolStart?.position.x)!) > 5) ? c.position.x + ((c.position.x >= (poolStart?.position.x)! ? -5 : 5)) : c.position.x,y:abs(c.position.y - (poolStart?.position.y)!) <= 5 ? c.position.y : c.position.y + (c.position.y >= (poolStart?.position.y)! ? -5 : 5))
+            
+            if abs(c.position.x - (poolStart?.position.x)!) <= 5 && abs(c.position.y - (poolStart?.position.y)!) <= 5 {
+                poolMov = nil
+                for i in 0 ... cpus!{
+                    gmcomp[i].updatezPos(zpos: zPos)
+                    gmcomp[i].updatePool(c:pool)
+                    gmcomp[i].act()
+                    
+                    print("Act")
+                    
+                    pool = gmcomp[i].getPool()
+                    sleep(1)
+                    zPos+=1
+                }
             }
         }
         //label?.text = "\(playerDeck.count)"
@@ -206,13 +261,34 @@ class GameScene: SKScene {
          n.strokeColor = SKColor.green
          self.addChild(n)
          }*/
+        pTurn = false
+        while(!pTurn){
+            for i in 0 ... cpus!{
+                
+                pTurn = gmcomp[i].doneF()
+                if pTurn{
+                    break
+                }
+            }
+        }
+        print("Pool zPos: \(pool?.zPosition)")
         if(pTurn){
+            zPos+=1
+            
+            pool = gmcomp[gmcomp.count-1].getPool()
+            
+            gmPlyr?.updatePool(c: pool)
+            gmPlyr?.updatezPos(zpos: zPos)
+            for i in 0 ... cpus!{
+                gmcomp[i].updatezPos(zpos: zPos)
+            }
             if(Int(pos.y) < -37){
                 for var c in playerDeck{
                     if(abs(c.position.x-pos.x) <= 50 && abs(c.position.y-pos.y) <= 75){
+                        print("Trying to play card \(c)")
                         var canPlay : Bool = false
-                        gr?.update(playerDeck:playerDeck,pool:pool)
-                        print("\(playerDeck)____\(gr?.getPlayableCards())")
+                        gr = GameRules(playerDeck: playerDeck, pool: pool)
+                        print("\(playerDeck)<-playerDeck ____ playableCards-> \(gr?.getPlayableCards())")
                         for var pc in (gr?.getPlayableCards())!{
                             if pc.isEqual(c){
                                 canPlay = true
@@ -220,37 +296,49 @@ class GameScene: SKScene {
                         }
                         if canPlay{
                             gmPlyr?.PlayCard(c: c)
-                            
+                            moveFinished = false
                             playerDeck = (gmPlyr?.getPDeck())!
                             let r : Int = drawPile.count <= 1 ? 0 : Int(arc4random())%(drawPile.count-1)
                             if let dup = pool{
                                 dup.isHidden = false
                                 drawPile.insert(c: dup, indx: r)
                             }
-                            pool?.isHidden = true
-                            pool = c
-                            drawPile = (gmPlyr?.getDrawPile())!
+                            //     pool?.isHidden = true
                             
+                            pool = c
+                            poolMov = pool
+                            drawPile = (gmPlyr?.getDrawPile())!
+                            zPos+=1
+                            
+                        }else{
+                            return;
                         }
-                        for var pc in (gr?.getPlayableCards())!{
-                            pc.position.y-=25
-                        }
+                        
                     }
                 }
             }else if(pos.y <= 37 && pos.y >= -37) && (pos.x <= 25 &&  pos.x >= -25){
-                gmPlyr?.draw()
+                let drawS :DrawStruct? = gmPlyr?.draw()
                 playerDeck = (gmPlyr?.getPDeck())!
                 pool = gmPlyr?.getPool()
                 drawPile = (gmPlyr?.getDrawPile())!
+                if let ds = drawS{
+                    
+                    handMov = ds.c
+                    handMovPos = ds.pos
+                }
                 
             }
+            /*
+             gmcomp?.updatezPos(zpos: zPos)
+             gmcomp?.updatePool(c: pool)*/
+            pTurn = false
+            /*
+             pool = gmcomp?.getPool()
+             */
+            gr?.update(playerDeck: playerDeck, pool: pool)
+            gmPlyr?.updatePool(c: pool)
         }
-        gmcomp?.updatePool(c: pool)
-        gmcomp?.act()
-        pool = gmcomp?.getPool()
-        gr?.update(playerDeck: playerDeck, pool: pool)
     }
-    
     func touchMoved(toPoint pos : CGPoint) {
         /*if let n = self.spinnyNode?.copy() as! SKShapeNode? {
          n.position = pos
@@ -269,25 +357,19 @@ class GameScene: SKScene {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if let label = self.label {
-            label.run(SKAction.init(named: "Pulse")!, withKey: "fadeInOut")
+        if canTouch{
+            for t in touches { self.touchDown(atPoint: t.location(in: self)) }
         }
-        
-        for t in touches { self.touchDown(atPoint: t.location(in: self)) }
     }
     
-   /* override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         for t in touches {
             //self.touchMoved(toPoint: t.location(in: self))
             
             //Code to allow cards to be moved and rearranged by the player
-            let location = t.location(in: self)
-            if let card = atPoint(location) as? Card {
-                card.position = location
-            }
             
         }
-    }*/
+    }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         for t in touches { self.touchUp(atPoint: t.location(in: self)) }

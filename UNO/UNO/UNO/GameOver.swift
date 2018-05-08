@@ -1,18 +1,10 @@
-//
-//  GameOver.swift
-//  UNO
-//
-//  Created by Grimshaw, Steven K on 4/26/18.
-//  Copyright © 2018 Wall, Nicholas E. All rights reserved.
-//
-
 import SpriteKit
 import GameplayKit
 
 class GameOver : SKScene {
-
+    
     var homeButton: SKSpriteNode!
-   
+    
     
     override func sceneDidLoad() {
         super.sceneDidLoad()
@@ -43,7 +35,7 @@ class GameOver : SKScene {
             print("1 opponent selected")
             goToScene(scene:SKScene(fileNamed: "TitleScene") as! TitleScene)
         }
-       
+        
     }
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         for t in touches {
@@ -51,6 +43,6 @@ class GameOver : SKScene {
         }
     }
     
-
-
+    
+    
 }
