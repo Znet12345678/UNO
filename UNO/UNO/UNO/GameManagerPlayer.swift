@@ -68,11 +68,15 @@ class GameManagerPlayer{
             var m : Int = -1
             var clr : color = .none
             for (key,val) in clrs{
+                if(key == .none){
+                    continue
+                }
                 m = max(m,val)
                 if m == val{
                     clr = key
                 }
             }
+            print("Color = clr")
             c.clr = clr
         }
         var gr = GameRules(playerDeck:playerDeck,pool:pool)

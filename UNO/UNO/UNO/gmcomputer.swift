@@ -69,6 +69,7 @@ class gmcomputer{
             print("Computer draws")
             self.draw()
             self.done = true
+            print("Done_")
             return false
         }else{
             print("choose random card")
@@ -81,6 +82,7 @@ class gmcomputer{
                 self.playCard(c:car)
                 print("Played card")
             }
+            print("Done")
             self.done = true
         })
         return true
@@ -98,8 +100,9 @@ class gmcomputer{
             var clrs = [color:Int]()
             
             for var c : Card in computerDeck {
-                if var i = clrs[c.clr]{
-                    i+=1
+                
+                if let i = clrs[c.clr]{
+                    clrs[c.clr]!+=1
                 }else{
                     clrs[c.clr] = 1
                 }
@@ -108,6 +111,9 @@ class gmcomputer{
             var m : Int = -1
             var clr : color = .none
             for (key,val) in clrs{
+                if(key == .none){
+                    continue
+                }
                 m = max(m,val)
                 if m == val{
                     clr = key

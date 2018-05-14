@@ -16,6 +16,7 @@ class GameScene: SKScene {
     private var spinnyNode : SKShapeNode?
     var cpus : Int?
     var gr : GameRules?
+    var colorLbl : SKLabelNode?
     var poolMov : Card?
     var handMov : Card?
     var moveFinished : Bool = true
@@ -96,6 +97,9 @@ class GameScene: SKScene {
             }
             if child.name == "PoolPile"{
                 poolStart = child as? SKSpriteNode
+            }
+            if child.name == "ColorLabel"{
+                colorLbl = child as? SKLabelNode
             }
         }
         
@@ -237,6 +241,7 @@ class GameScene: SKScene {
                             print("COMP ACTION \(b)")
                             print("Act")
                             var c = gmcomp[i].getPool()!
+                            colorLbl!.text = "\(c.clr)"
                             if(c.num == 12){
                                 dir = !dir
                             }
@@ -312,6 +317,7 @@ class GameScene: SKScene {
                             if(c.num == 12){
                                 dir = !dir
                             }
+                            colorLbl!.text = "\(c.clr)"
                             print("Got pool")
                             if(c.num == 14){
                                 if(i == cpus){
@@ -429,6 +435,7 @@ class GameScene: SKScene {
                         }
                         if canPlay{
                             gmPlyr?.PlayCard(c: c)
+                            colorLbl!.text = "\(c.clr)"
                             if(c.num == 12){
                                 dir = !dir
                             }
@@ -460,7 +467,11 @@ class GameScene: SKScene {
                             return;
                         }
                         for var i in playerDeck{
-                            i.position.x = i.position.x < c.position.x ? i.position.x+CGFloat(40) : i.position.x-CGFloat(40)
+                            if i.position.x < c.position.x{
+                                i.position.x+=CGFloat(40)
+                            }else if( i.position.x > c.position.x){
+                                i.position.x-=CGFloat(40)
+                            }
                         }
                     }
                 }
