@@ -37,6 +37,7 @@ class GameScene: SKScene {
     //computer's cards
     var computerDeck:[[Card]] = []
     var gmPlyr :GameManagerPlayer?
+    var dir = true
     //creates a LIFO structure
        //players play their card and place here
     var pool : Card?
@@ -225,21 +226,32 @@ class GameScene: SKScene {
                 while(canPlay){
                     print("In loop 2")
                     canPlay = false
-                    for i in 0 ... cpus!{
+                    var i : Int = dir ? 0 : cpus!
+                    while(dir ? (i <= cpus!) : (i >= 0)){
                         if compCanPlay{
                             gmcomp[i].updatezPos(zpos:zPos)
                             gmcomp[i].updatePool(c: pool)
+                            
                             var b = gmcomp[i].act()
                             computerDeck[i] = gmcomp[i].getComputerDeck()
                             print("COMP ACTION \(b)")
                             print("Act")
                             var c = gmcomp[i].getPool()!
+                            if(c.num == 12){
+                                dir = !dir
+                            }
                             if(c.num == 14){
                                 if(i == cpus){
                                     var i = 0
                                     while(i < 4){
-                                        gmPlyr!.draw()
-                                         playerDeck = gmPlyr!.getPDeck()
+                                        var ds : DrawStruct? = gmPlyr!.draw()
+
+                                        playerDeck = gmPlyr!.getPDeck()
+                                        if let ds = ds{
+                                            
+                                            handMov = ds.c
+                                            handMovPos = ds.pos
+                                        }
                                         i+=1
                                     }
                                 }else{
@@ -265,6 +277,11 @@ class GameScene: SKScene {
                         }else{
                             compCanPlay = true
                         }
+                        if(dir){
+                            i+=1
+                        }else{
+                            i-=1
+                        }
                     }
                 }
                 print("Done")
@@ -281,7 +298,8 @@ class GameScene: SKScene {
                 while(canPlay){
                     canPlay = false
                     print("In loop 1")
-                    for i in 0 ... cpus!{
+                    var i : Int = (dir) ? 0 : cpus!
+                    while((dir) ? (i <= cpus!) : (i >= 0)){
                         print("Init for each")
                         if compCanPlay{
                             gmcomp[i].updatezPos(zpos:zPos)
@@ -291,14 +309,22 @@ class GameScene: SKScene {
                             print("COMP ACTION \(b)")
                             print("Act")
                             var c = gmcomp[i].getPool()!
+                            if(c.num == 12){
+                                dir = !dir
+                            }
                             print("Got pool")
                             if(c.num == 14){
                                 if(i == cpus){
-                                    var i = 0
-                                    while(i < 4){
-                                        gmPlyr!.draw()
+                                    var j = 0
+                                    while(j < 4){
+                                        var ds : DrawStruct? = gmPlyr!.draw()
                                         playerDeck = gmPlyr!.getPDeck()
-                                        i+=1
+                                        if let ds = ds{
+                                            
+                                            handMov = ds.c
+                                            handMovPos = ds.pos
+                                        }
+                                        j+=1
                                     }
                                 }else{
                                     var j = 0
@@ -324,6 +350,11 @@ class GameScene: SKScene {
                             print("Done")
                         }else{
                             compCanPlay = true
+                        }
+                        if(dir){
+                            i+=1
+                        }else{
+                            i-=1
                         }
                     }
                     print("exited while loop")
@@ -398,11 +429,14 @@ class GameScene: SKScene {
                         }
                         if canPlay{
                             gmPlyr?.PlayCard(c: c)
+                            if(c.num == 12){
+                                dir = !dir
+                            }
                             if(c.num == 14){
-                                var i = 0
-                                while(i < 4){
+                                var j = 0
+                                while(j < 4){
                                     gmcomp[0].draw()
-                                    i+=1
+                                    j+=1
                                 }
                             }
                             gr?.rules(previousCard: pool, cards: c)
@@ -425,7 +459,9 @@ class GameScene: SKScene {
                         }else{
                             return;
                         }
-                        
+                        for var i in playerDeck{
+                            i.position.x = i.position.x < c.position.x ? i.position.x+CGFloat(40) : i.position.x-CGFloat(40)
+                        }
                     }
                 }
             }else if(pos.y <= 37 && pos.y >= -37) && (pos.x <= 25 &&  pos.x >= -25){
@@ -451,6 +487,7 @@ class GameScene: SKScene {
             gr?.update(playerDeck: playerDeck, pool: pool)
             gmPlyr?.updatePool(c: pool)
         }
+        
     }
     func touchMoved(toPoint pos : CGPoint) {
         /*if let n = self.spinnyNode?.copy() as! SKShapeNode? {
