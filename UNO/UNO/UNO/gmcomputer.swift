@@ -89,8 +89,32 @@ class gmcomputer{
     func updatePool(c : Card){
         pool = c
     }
+    func getComputerDeck()->[Card]{
+        return computerDeck
+    }
     func getPool()->Card?{return pool}
     func playCard(c: Card) {
+        if c.typ == .plus4 || c.typ == .swap{
+            var clrs = [color:Int]()
+            
+            for var c : Card in computerDeck {
+                if var i = clrs[c.clr]{
+                    i+=1
+                }else{
+                    clrs[c.clr] = 1
+                }
+                
+            }
+            var m : Int = -1
+            var clr : color = .none
+            for (key,val) in clrs{
+                m = max(m,val)
+                if m == val{
+                    clr = key
+                }
+            }
+            c.clr = clr
+        }
         c.isHidden = false
         var dup : [Card] = computerDeck
         dup.append(c)

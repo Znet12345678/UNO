@@ -230,9 +230,27 @@ class GameScene: SKScene {
                             gmcomp[i].updatezPos(zpos:zPos)
                             gmcomp[i].updatePool(c: pool)
                             var b = gmcomp[i].act()
+                            computerDeck[i] = gmcomp[i].getComputerDeck()
                             print("COMP ACTION \(b)")
                             print("Act")
                             var c = gmcomp[i].getPool()!
+                            if(c.num == 14){
+                                if(i == cpus){
+                                    var i = 0
+                                    while(i < 4){
+                                        gmPlyr!.draw()
+                                         playerDeck = gmPlyr!.getPDeck()
+                                        i+=1
+                                    }
+                                }else{
+                                    var j = 0
+                                    while(j < 4){
+                                        gmcomp[i+1].draw()
+                                        computerDeck[i+1] = gmcomp[i+1].getComputerDeck()
+                                        j+=1
+                                    }
+                                }
+                            }
                             if(b){
                                 gr?.rules(previousCard: pool, cards: c)
                                 compCanPlay = !(gr?.getNextSkipped())!
@@ -268,11 +286,29 @@ class GameScene: SKScene {
                         if compCanPlay{
                             gmcomp[i].updatezPos(zpos:zPos)
                             gmcomp[i].updatePool(c: pool)
+                            computerDeck[i] = gmcomp[i].getComputerDeck()
                             var b = gmcomp[i].act()
                             print("COMP ACTION \(b)")
                             print("Act")
                             var c = gmcomp[i].getPool()!
                             print("Got pool")
+                            if(c.num == 14){
+                                if(i == cpus){
+                                    var i = 0
+                                    while(i < 4){
+                                        gmPlyr!.draw()
+                                        playerDeck = gmPlyr!.getPDeck()
+                                        i+=1
+                                    }
+                                }else{
+                                    var j = 0
+                                    while(j < 4){
+                                        gmcomp[i+1].draw()
+                                        computerDeck[i+1]=gmcomp[i+1].getComputerDeck()
+                                        j+=1
+                                    }
+                                }
+                            }
                             if(b){
                                 gr?.rules(previousCard: pool, cards: c)
                                 compCanPlay = !(gr?.getNextSkipped())!
@@ -281,6 +317,7 @@ class GameScene: SKScene {
                                     canPlay = true
                                 }
                             }
+                            
                             pool = c
                             sleep(1)
                             zPos+=1
@@ -361,6 +398,13 @@ class GameScene: SKScene {
                         }
                         if canPlay{
                             gmPlyr?.PlayCard(c: c)
+                            if(c.num == 14){
+                                var i = 0
+                                while(i < 4){
+                                    gmcomp[0].draw()
+                                    i+=1
+                                }
+                            }
                             gr?.rules(previousCard: pool, cards: c)
                             compCanPlay = !(gr?.getNextSkipped())!
                             print("Can comp play?\(compCanPlay)")

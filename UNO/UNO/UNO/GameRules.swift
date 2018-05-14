@@ -48,19 +48,7 @@ class GameRules {
                 if cards.typ == .swap {
                     //changeColor()
                 }
-            } else {
-            
-                if cards.typ == .plus4 {
-                    //changeColor()
-                    //draw(4)
-                    
-                }
-                
-                if cards.typ == .swap {
-                    //changeColor()
-                }
-                
-            }
+            } 
         }else{
             if cards.num == 10 {
                 nextSkipped = true
@@ -72,13 +60,7 @@ class GameRules {
             if cards.num == 12 {
                 //draw function that only makes player draw if they do not use a +2
             }
-            if cards.typ == .plus4 {
-                //changeColor()
-                //draw(4)
-            }
-            if cards.typ == .swap {
-                //changeColor()
-            }
+           
         }
     }
     func getNextSkipped()->Bool{
@@ -91,7 +73,7 @@ class GameRules {
         if let previousCard = pool{
        
             for cards in playerDeck {
-                if cards.num == previousCard.num || cards.clr == previousCard.clr {
+                if cards.num == previousCard.num || cards.clr == previousCard.clr || cards.num > 12 {
                     playableCards.append(cards)
                 }
             }
