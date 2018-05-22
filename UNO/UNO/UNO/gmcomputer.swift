@@ -61,18 +61,50 @@ class gmcomputer{
             print("Computer draws")
             self.draw()
             self.done = true
+            print("Done_")
             return false
         }else{
             print("choose random card")
             c = self.chooseRandomCard(regProb: 10, specProb: 3)
+            if c!.typ == .plus4 || c!.typ == .swap{
+                var clrs = [color:Int]()
+                
+                for var c : Card in computerDeck {
+                    if var i = clrs[c.clr]{
+                        clrs[c.clr]!+=1
+                    }else{
+                        clrs[c.clr] = 1
+                    }
+                    
+                }
+                var m : Int = -1
+                var clr : color = .none
+                for (key,val) in clrs{
+                    if(key == .none){
+                        
+                        continue
+                    }
+                    m = max(m,val)
+                    if m == val{
+                        clr = key
+                    }
+                }
+                print("Color = clr")
+                c!.clr = clr
+                if(c!.clr == .none){
+                    c!.clr = .red
+                }
+            }
             removeFromHand(c:c!)
         }
         print("Chose random card")
+        c?.setOwnr(ownr: .plyr)
         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(2), execute: {
             if let car = c{
                 self.playCard(c:car)
                 print("Played card")
             }
+            print("Done")
             self.done = true
         })
         return true
@@ -86,27 +118,7 @@ class gmcomputer{
     }
     func getPool()->Card?{return pool}
     func playCard(c: Card) {
-        if c.typ == .plus4 || c.typ == .swap{
-            var clrs = [color:Int]()
-            
-            for var c : Card in computerDeck {
-                if var i = clrs[c.clr]{
-                    i+=1
-                }else{
-                    clrs[c.clr] = 1
-                }
-                
-            }
-            var m : Int = -1
-            var clr : color = .none
-            for (key,val) in clrs{
-                m = max(m,val)
-                if m == val{
-                    clr = key
-                }
-            }
-            c.clr = clr
-        }
+        
         c.isHidden = false
         var dup : [Card] = computerDeck
         dup.append(c)

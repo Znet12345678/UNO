@@ -1,4 +1,3 @@
-
 import SpriteKit
 import GameplayKit
 
@@ -9,6 +8,7 @@ class GameScene: SKScene {
     private var spinnyNode : SKShapeNode?
     var cpus : Int?
     var gr : GameRules?
+    var colorLbl : SKLabelNode?
     var poolMov : Card?
     var handMov : Card?
     var moveFinished : Bool = true
@@ -39,6 +39,7 @@ class GameScene: SKScene {
     //players draw cards from
     var drawPile : Stack = Stack()
     //NOTE THIS IS NOT GOING TO STAY
+    //all Cards initalized here (IK hard code is bad but i get nullPointer issues. If you figure a better way thats great)
     //red
     func shuffle( deck: [Card])-> [Card]{
         var i = deck.count-1
@@ -60,11 +61,12 @@ class GameScene: SKScene {
     
     var iDeck : [Card] = []
     var iDecks  = Stack()
-    var pStart :SKSpriteNode?,cStart : SKSpriteNode?, pEnd :SKSpriteNode?,cEnd:SKSpriteNode?,poolStart : SKSpriteNode?
+    var pStart :SKSpriteNode?,cStart : SKSpriteNode?, pEnd :SKSpriteNode?,cEnd:SKSpriteNode?,poolStart : SKSpriteNode?, comp3 : SKSpriteNode?
     var deck : SKSpriteNode?
     //takes all cards and assigns a location for them
     func fillDecks()
     {
+        print(cpus)
         //drawPile.push(CARD) adds the card to the stack
         //CARD.position gives a location for the touchesMoved method to use for testing the drawing and rearranging of cards logic
         //addChild(CARD) activates the node to be used by the game handler
@@ -73,52 +75,58 @@ class GameScene: SKScene {
             if child.name == "Deck"{
                 deck = child as? SKSpriteNode
             }
-            if child.name == "Player 1"{
+            if child.name == "StartXPlayer"{
                 pStart = child as? SKSpriteNode
             }
-            if child.name == "Player 2"{
+            if child.name == "StartXComp"{
                 cStart = child as? SKSpriteNode
             }
-            if child.name == "Player 3"{
+            if child.name == "EndXPlayer"{
                 pEnd = child as? SKSpriteNode
             }
-            if child.name == "Player 4"{
+            if child.name == "EndXComp"{
                 cEnd = child as? SKSpriteNode
             }
             if child.name == "PoolPile"{
                 poolStart = child as? SKSpriteNode
             }
+            if child.name == "ColorLabel"{
+                colorLbl = child as? SKLabelNode
+            }
+            if child.name == "Comp3"{
+                comp3 = child as? SKSpriteNode
+            }
         }
-        
         
         var i = 0
         while(i < 11){
-            iDeck.append(Card(clr:.red,typ:.normal,num:i))
-            iDeck.append(Card(clr:.yellow,typ:.normal,num:i))
-            iDeck.append(Card(clr:.blue,typ:.normal,num:i))
-            iDeck.append(Card(clr:.green,typ:.normal,num:i))
+            iDeck.append(Card(clr:.red,typ:.normal,num:i,ownr:.plyr))
+            iDeck.append(Card(clr:.yellow,typ:.normal,num:i,ownr:.plyr))
+            iDeck.append(Card(clr:.blue,typ:.normal,num:i,ownr:.plyr))
+            iDeck.append(Card(clr:.green,typ:.normal,num:i,ownr:.plyr))
             i+=1
         }
         let clrarr = [color.red,color.green,color.blue,color.yellow]
         while(i < 13){
             for var clr : color in clrarr{
-                iDeck.append(Card(clr:clr,typ:.normal,num:i))
+                iDeck.append(Card(clr:clr,typ:.normal,num:i,ownr:.plyr))
             }
             i+=1
         }
         var a = 0
         while(a < 2){
-            iDeck.append(Card(clr:color.none,typ:.swap,num:i))
+            iDeck.append(Card(clr:color.none,typ:.swap,num:i,ownr:.plyr))
             a+=1
         }
         i+=1
         a = 0
         while(a < 2){
-            iDeck.append(Card(clr:color.none,typ:.plus4,num:i))
+            iDeck.append(Card(clr:color.none,typ:.plus4,num:i,ownr:.plyr))
             a+=1
         }
         iDeck = shuffle(deck:iDeck)
         var x = Int((pStart?.position.x)!),y = Int((pStart?.position.y)!)
+        var x1 = Int((comp3?.position.x)!),y1 = Int((cStart?.position.y)!),x2 = Int((cStart?.position.x)!),y2 = Int((cEnd?.position.y)!)-80,y3 = Int((cEnd?.position.y)!)-80,x3 = Int((cEnd?.position.x)!)
         for var c : Card in iDeck{
             c.position = CGPoint(x:(deck?.position.x)!,y:(deck?.position.y)!)
             addChild(c)
@@ -133,11 +141,24 @@ class GameScene: SKScene {
         while(i < 7){
             playerDeck.append(iDecks.pop()!)
             playerDeck[playerDeck.count-1].position = CGPoint(x:x,y:y)
-            playerDeck[playerDeck.count-1].zRotation = CGFloat(rot)
+        //    playerDeck[playerDeck.count-1].zRotation = CGFloat(rot)
             rot-=Double.pi/16
             for j in 0 ... cpus!{
                 computerDeck[j].append(iDecks.pop()!)
- 
+                computerDeck[j][computerDeck[j].count-1].setOwnr(ownr: .comp)
+                if(j == 0){
+                    computerDeck[j][computerDeck[j].count-1].position = CGPoint(x:x2,y:y1)
+                    y1-=80
+                }
+                if(j == 1){
+                    computerDeck[j][computerDeck[j].count-1].position = CGPoint(x:x3,y:y2)
+                    y2-=80
+                }
+                if(j == 2){
+                    computerDeck[j][computerDeck[j].count-1].position = CGPoint(x:x1,y:y3)
+                    x1+=80
+                }
+                
             }
             x+=80
             i+=1
@@ -190,7 +211,6 @@ class GameScene: SKScene {
             computerWin = true
         }
     }
-
     
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
@@ -209,8 +229,8 @@ class GameScene: SKScene {
         }
         
         if let hc = handMov{
-            print(hc)
-            hc.position = CGPoint(x:abs(hc.position.x - (handMovPos?.x)!) > 5 ? hc.position.x + (hc.position.x >= (handMovPos?.x)! ? -5 : 5) : hc.position.x,y:abs(hc.position.y - (handMovPos?.y)!) <= 5 ? CGFloat(hc.position.y) : hc.position.y + (hc.position.y >= (handMovPos?.y)! ? -5 : 5))
+            
+            hc.position = CGPoint(x:abs(hc.position.x - (handMovPos?.x)!) > 5 ? hc.position.x + (hc.position.x >= (handMovPos?.x)! ? -10 : 10)  : hc.position.x,y:abs(hc.position.y - (handMovPos?.y)!) <= 5 ? CGFloat(hc.position.y) : hc.position.y + (hc.position.y >= (handMovPos?.y)! ? -10 : 10))
             if abs(hc.position.x - (handMovPos?.x)!) <= 5 && abs(hc.position.y - (handMovPos?.y)!) <= 5{
                 handMov = nil
                 handMovPos = nil
@@ -225,11 +245,12 @@ class GameScene: SKScene {
                             gmcomp[i].updatezPos(zpos:zPos)
                             gmcomp[i].updatePool(c: pool)
                             
-                            let b = gmcomp[i].act()
+                            var b = gmcomp[i].act()
                             computerDeck[i] = gmcomp[i].getComputerDeck()
                             print("COMP ACTION \(b)")
                             print("Act")
                             var c = gmcomp[i].getPool()!
+                            colorLbl!.text = "\(c.clr)"
                             if(c.num == 12){
                                 dir = !dir
                             }
@@ -282,7 +303,7 @@ class GameScene: SKScene {
         }
         if let c = poolMov{
             
-            c.position = CGPoint(x:(abs(c.position.x - (poolStart?.position.x)!) > 5) ? c.position.x + ((c.position.x >= (poolStart?.position.x)! ? -5 : 5)) : c.position.x,y:abs(c.position.y - (poolStart?.position.y)!) <= 5 ? c.position.y : c.position.y + (c.position.y >= (poolStart?.position.y)! ? -5 : 5))
+            c.position = CGPoint(x:(abs(c.position.x - (poolStart?.position.x)!) > 5) ? c.position.x + ((c.position.x >= (poolStart?.position.x)! ? -5 : 5)) : c.position.x,y:abs(c.position.y - (poolStart?.position.y)!) <= 5 ? c.position.y : c.position.y + (c.position.y >= (poolStart?.position.y)! ? -10 : 10))
             
             if abs(c.position.x - (poolStart?.position.x)!) <= 5 && abs(c.position.y - (poolStart?.position.y)!) <= 5 {
                 poolMov = nil
@@ -302,9 +323,11 @@ class GameScene: SKScene {
                             print("COMP ACTION \(b)")
                             print("Act")
                             var c = gmcomp[i].getPool()!
+                            colorLbl!.text = "\(c.clr)"
                             if(c.num == 12){
                                 dir = !dir
                             }
+                            colorLbl!.text = "\(c.clr)"
                             print("Got pool")
                             if(c.num == 14){
                                 if(i == cpus){
@@ -354,7 +377,6 @@ class GameScene: SKScene {
                 }
             }
         }
-    
         //label?.text = "\(playerDeck.count)"
         checkDeckSize()
         //if 1 then it is the player's turn
@@ -389,9 +411,6 @@ class GameScene: SKScene {
          self.addChild(n)
          }*/
         pTurn = false
-       
-        //MARK: Question
-        //Why are we doing this this way
         while(!pTurn){
             for i in 0 ... cpus!{
                 
@@ -426,6 +445,7 @@ class GameScene: SKScene {
                         }
                         if canPlay{
                             gmPlyr?.PlayCard(c: c)
+                            colorLbl!.text = "\(c.clr)"
                             if(c.num == 12){
                                 dir = !dir
                             }
@@ -457,24 +477,15 @@ class GameScene: SKScene {
                             return;
                         }
                         for var i in playerDeck{
-                            if i.position.x < c.position.x {
-                                i.position.x += CGFloat(40)
-                            }
-                            else if i.position.x > c.position.x {
-                                i.position.x -= CGFloat(40)
+                            if i.position.x < c.position.x{
+                                i.position.x+=CGFloat(40)
+                            }else if( i.position.x > c.position.x){
+                                i.position.x-=CGFloat(40)
                             }
                         }
-                        /*for var i in 0...computerDeck.count {
-                            if computerDeck[0][i].position.y > pool!.position.y {
-                                computerDeck[0][i].position.y -= CGFloat(40)
-                            }
-                            else if computerDeck[0][i].position.y < pool!.position.y {
-                                computerDeck[0][i].position.y += CGFloat(40)
-                            }
-                        }*/
                     }
                 }
-            }else if(pos.y <= deck!.position.y + 37.5 && pos.y >= deck!.position.y - 37.5) && (pos.x <= deck!.position.x + 25 &&  pos.x >= deck!.position.x - 25){
+            }else if(pos.y <= 37 && pos.y >= -37) && (pos.x <= 25 &&  pos.x >= -25){
                 let drawS :DrawStruct? = gmPlyr?.draw()
                 playerDeck = (gmPlyr?.getPDeck())!
                 pool = gmPlyr?.getPool()

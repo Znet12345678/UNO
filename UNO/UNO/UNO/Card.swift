@@ -1,5 +1,8 @@
 import SpriteKit
-
+enum owner{
+    case comp
+    case plyr
+}
 enum type {
     case normal
     case swap
@@ -18,14 +21,15 @@ class Card : SKSpriteNode {
     var clr: color
     let typ: type
     let num: Int
-    let frontTexture: SKTexture
+    var frontTexture: SKTexture
     let backTexture: SKTexture
+    var ownr : owner = .plyr
     
-    
-    init(clr: color, typ: type, num: Int) {
+    init(clr: color, typ: type, num: Int,ownr:owner) {
         self.clr = clr
         self.typ = typ
         self.num = num
+        self.ownr = ownr
         backTexture = SKTexture(imageNamed: "unocard_front")
         var color = String()
         switch(clr){
@@ -48,7 +52,14 @@ class Card : SKSpriteNode {
         super.init(texture: frontTexture, color: .clear,size: frontTexture.size())
         
     }
-    
+    func setOwnr(ownr : owner){
+        self.ownr = ownr
+        if(ownr == .comp){
+            super.texture = SKTexture(imageNamed:"unocard_front")
+        }else{
+            super.texture = frontTexture
+        }
+    }
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
