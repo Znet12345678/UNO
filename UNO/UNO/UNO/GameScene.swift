@@ -105,32 +105,33 @@ class GameScene: SKScene {
         
         var i = 0
         while(i < 11){
-            iDeck.append(Card(clr:.red,typ:.normal,num:i))
-            iDeck.append(Card(clr:.yellow,typ:.normal,num:i))
-            iDeck.append(Card(clr:.blue,typ:.normal,num:i))
-            iDeck.append(Card(clr:.green,typ:.normal,num:i))
+            iDeck.append(Card(clr:.red,typ:.normal,num:i,ownr:.plyr))
+            iDeck.append(Card(clr:.yellow,typ:.normal,num:i,ownr:.plyr))
+            iDeck.append(Card(clr:.blue,typ:.normal,num:i,ownr:.plyr))
+            iDeck.append(Card(clr:.green,typ:.normal,num:i,ownr:.plyr))
             i+=1
         }
         let clrarr = [color.red,color.green,color.blue,color.yellow]
         while(i < 13){
             for var clr : color in clrarr{
-                iDeck.append(Card(clr:clr,typ:.normal,num:i))
+                iDeck.append(Card(clr:clr,typ:.normal,num:i,ownr:.plyr))
             }
             i+=1
         }
         var a = 0
         while(a < 2){
-            iDeck.append(Card(clr:color.none,typ:.swap,num:i))
+            iDeck.append(Card(clr:color.none,typ:.swap,num:i,ownr:.plyr))
             a+=1
         }
         i+=1
         a = 0
         while(a < 2){
-            iDeck.append(Card(clr:color.none,typ:.plus4,num:i))
+            iDeck.append(Card(clr:color.none,typ:.plus4,num:i,ownr:.plyr))
             a+=1
         }
         iDeck = shuffle(deck:iDeck)
         var x = Int((pStart?.position.x)!),y = Int((pStart?.position.y)!)
+        var x1 = Int((cStart?.position.x)!),y1 = Int((cStart?.position.y)!),x2 = Int((cStart?.position.x)!),y2 = Int((cStart?.position.y)!)-80,y3 = Int((cEnd?.position.y)!)-80
         for var c : Card in iDeck{
             c.position = CGPoint(x:(deck?.position.x)!,y:(deck?.position.y)!)
             addChild(c)
@@ -149,7 +150,20 @@ class GameScene: SKScene {
             rot-=Double.pi/16
             for j in 0 ... cpus!{
                 computerDeck[j].append(iDecks.pop()!)
-                computerDeck[j][computerDeck[j].count-1].isHidden = true
+                computerDeck[j][computerDeck[j].count-1].setOwnr(ownr: .comp)
+                if(j == 0){
+                    computerDeck[j][computerDeck[j].count-1].position = CGPoint(x:x1,y:y1)
+                    x1+=80
+                }
+                if(j == 1){
+                    computerDeck[j][computerDeck[j].count-1].position = CGPoint(x:x2,y:y2)
+                    y2-=80
+                }
+                if(j == 2){
+                    computerDeck[j][computerDeck[j].count-1].position = CGPoint(x:x2,y:y3)
+                    y3-=80
+                }
+                
             }
             x+=80
             i+=1
@@ -314,6 +328,7 @@ class GameScene: SKScene {
                             print("COMP ACTION \(b)")
                             print("Act")
                             var c = gmcomp[i].getPool()!
+                            colorLbl!.text = "\(c.clr)"
                             if(c.num == 12){
                                 dir = !dir
                             }

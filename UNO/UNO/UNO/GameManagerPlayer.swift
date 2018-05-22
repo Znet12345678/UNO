@@ -59,7 +59,7 @@ class GameManagerPlayer{
             
             for var c : Card in playerDeck {
                 if var i = clrs[c.clr]{
-                    i+=1
+                    clrs[c.clr]!+=1
                 }else{
                     clrs[c.clr] = 1
                 }
@@ -69,6 +69,7 @@ class GameManagerPlayer{
             var clr : color = .none
             for (key,val) in clrs{
                 if(key == .none){
+                    
                     continue
                 }
                 m = max(m,val)
@@ -78,6 +79,9 @@ class GameManagerPlayer{
             }
             print("Color = clr")
             c.clr = clr
+            if(c.clr == .none){
+               c.clr = .red
+            }
         }
         var gr = GameRules(playerDeck:playerDeck,pool:pool)
         var pCards : [Card] = gr.getPlayableCards()
