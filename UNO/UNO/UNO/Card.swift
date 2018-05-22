@@ -15,7 +15,7 @@ enum color {
 }
 
 class Card : SKSpriteNode {
-    let clr: color
+    var clr: color
     let typ: type
     let num: Int
     let frontTexture: SKTexture

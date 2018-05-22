@@ -46,6 +46,27 @@ class GameManagerPlayer{
         }
     }
     func PlayCard(c : Card){
+        if c.typ == .plus4 || c.typ == .swap{
+            var clrs = [color:Int]()
+            
+            for var c : Card in playerDeck {
+                if var i = clrs[c.clr]{
+                    i+=1
+                }else{
+                    clrs[c.clr] = 1
+                }
+                
+            }
+            var m : Int = -1
+            var clr : color = .none
+            for (key,val) in clrs{
+                m = max(m,val)
+                if m == val{
+                    clr = key
+                }
+            }
+            c.clr = clr
+        }
         var gr = GameRules(playerDeck:playerDeck,pool:pool)
         var pCards : [Card] = gr.getPlayableCards()
         var playable :Bool = false

@@ -23,22 +23,15 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFit" image="unoloadingscreen" translatesAutoresizingMaskIntoConstraints="NO" id="HNM-7u-gIV">
-                                <rect key="frame" x="62" y="143" width="251" height="381"/>
+                                <rect key="frame" x="140" y="201" width="94" height="264"/>
                             </imageView>
-                            <activityIndicatorView opaque="NO" contentMode="redraw" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="oXT-1l-Y6b">
-                                <rect key="frame" x="177" y="437" width="20" height="20"/>
-                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="HNM-7u-gIV" firstAttribute="leading" secondItem="M4h-xh-uI6" secondAttribute="leadingMargin" constant="46" id="1al-rM-vsn"/>
-                            <constraint firstItem="HNM-7u-gIV" firstAttribute="top" secondItem="BJc-if-PSL" secondAttribute="bottom" constant="123" id="26s-1t-dxz"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="oXT-1l-Y6b" secondAttribute="trailing" constant="162" id="4A8-yE-wLE"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="HNM-7u-gIV" secondAttribute="trailing" constant="46" id="9FI-Kg-bMl"/>
-                            <constraint firstItem="WJH-JA-D0V" firstAttribute="top" secondItem="HNM-7u-gIV" secondAttribute="bottom" constant="143" id="DxA-LV-BPQ"/>
-                            <constraint firstItem="oXT-1l-Y6b" firstAttribute="top" secondItem="BJc-if-PSL" secondAttribute="bottom" constant="417" id="Lj1-3o-MRz"/>
-                            <constraint firstItem="oXT-1l-Y6b" firstAttribute="leading" secondItem="M4h-xh-uI6" secondAttribute="leadingMargin" constant="161" id="OVP-Sd-urC"/>
-                            <constraint firstItem="WJH-JA-D0V" firstAttribute="top" secondItem="oXT-1l-Y6b" secondAttribute="bottom" constant="210" id="jIz-5A-w3P"/>
+                            <constraint firstItem="HNM-7u-gIV" firstAttribute="leading" secondItem="M4h-xh-uI6" secondAttribute="leadingMargin" constant="124" id="6iZ-sp-fsn"/>
+                            <constraint firstItem="HNM-7u-gIV" firstAttribute="top" secondItem="BJc-if-PSL" secondAttribute="bottom" constant="181" id="9d2-kG-PRp"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="HNM-7u-gIV" secondAttribute="trailing" constant="125" id="QSk-OS-Qhk"/>
+                            <constraint firstItem="WJH-JA-D0V" firstAttribute="top" secondItem="HNM-7u-gIV" secondAttribute="bottom" constant="202" id="o7q-Hv-DpI"/>
                         </constraints>
                     </view>
                 </viewController>
