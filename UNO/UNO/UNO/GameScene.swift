@@ -448,11 +448,15 @@ class GameScene: SKScene {
                                 canPlay = true
                             }
                         }
+                        var skip : Bool = false
                         if canPlay{
                             gmPlyr?.PlayCard(c: c)
                             colorLbl!.text = "\(c.clr)"
                             if(c.num == 12){
                                 dir = !dir
+                                if(cpus == 0){
+                                    skip = true
+                                }
                             }
                             if(c.num == 14){
                                 var j = 0
@@ -462,7 +466,7 @@ class GameScene: SKScene {
                                 }
                             }
                             gr?.rules(previousCard: pool, cards: c)
-                            compCanPlay = !(gr?.getNextSkipped())!
+                            compCanPlay = !(gr?.getNextSkipped())! || !skip
                             print("Can comp play?\(compCanPlay)")
                             moveFinished = false
                             playerDeck = (gmPlyr?.getPDeck())!
