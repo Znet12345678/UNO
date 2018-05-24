@@ -33,7 +33,7 @@ class GameRules {
             if cards.num == pc.num || cards.clr == pc.clr {
                 if cards.num == 10 {
                     nextSkipped = true
-                    print("Exec")
+                
                 }
                 if cards.num == 11 {
                     //reverse

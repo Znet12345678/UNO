@@ -113,12 +113,15 @@ class GameManagerPlayer{
             let c = drawPile.pop()!
 
             var posX : Int = playerDeck.count == 0 ? Int(pStart.x) : Int(playerDeck[playerDeck.count-1].position.x),posY : Int = playerDeck.count == 0 ? Int(pStart.y) : Int(playerDeck[playerDeck.count-1].position.y)
+            
             if posX + 80 > Int(pEnd.x){
                 posX = Int(pStart.x);
                 posY+=100
             }
            
-            
+            if(posY >= -100){
+                posY = Int(pStart.y)
+            }
             c.isHidden = false
             playerDeck.append(c)
             let ret =  DrawStruct(pos:CGPoint(x:posX+80,y:posY),c:c)

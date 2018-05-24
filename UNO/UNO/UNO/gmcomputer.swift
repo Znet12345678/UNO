@@ -63,6 +63,9 @@ class gmcomputer{
         done = false
         print("Init")
         var c : Card?
+        if(computerDeck.count == 0){
+            return false
+        }
         self.gr = GameRules(playerDeck:self.computerDeck,pool:self.pool)
         self.playableCards = (self.gr?.getPlayableCards())!
         if self.playableCards.count == 0{
@@ -103,18 +106,16 @@ class gmcomputer{
                     c!.clr = .red
                 }
             }
+            
             removeFromHand(c:c!)
         }
         print("Chose random card")
         c?.setOwnr(ownr: .plyr)
-        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(2), execute: {
-            if let car = c{
-                self.playCard(c:car)
-                print("Played card")
-            }
-            print("Done")
-            self.done = true
-        })
+        if let card = c{
+            self.playCard(c:card)
+        }
+        self.done = true
+        
         return true
         
     }
@@ -152,6 +153,7 @@ class gmcomputer{
              pool = c
             
         }
+        
         print("Computer card\(c)")
         gr.update(playerDeck: computerDeck, pool: pool)
         print("comp zPos:\(nxtzPos)")
@@ -169,9 +171,12 @@ class gmcomputer{
                 posX = Int(cBegin.x);
                 posY+=100
             }
+            if(posY < 100){
+                posY = Int(cBegin.y)
+            }
             c.position.x = CGFloat(posX+80)
             c.position.y = CGFloat(posY)
-            c.isHidden = true
+            c.isHidden = false
             computerDeck.append(c)
             gr.update(playerDeck: computerDeck, pool: pool)
             //    pTurn = false
